@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  db:
+    image: postgres
+    ports:
+      - 5433:5432
+    expose:
+      - 5432
+    environment:
+      POSTGRES_DB: euroleague
+      POSTGRES_USER: euroleague
+      POSTGRES_PASSWORD: euroleague
+    volumes:
+      - db_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "product"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+    restart: on-failure:5
+
+volumes:
+  db_data:
