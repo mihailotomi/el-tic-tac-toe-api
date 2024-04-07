@@ -1,11 +1,11 @@
-import { Module, OnApplicationBootstrap } from "@nestjs/common";
+import { Inject, Module, OnApplicationBootstrap, OnModuleInit } from "@nestjs/common";
 
 import { Pool } from "pg";
 import { DB_CONTEXT } from "./dependency-injection/injection-token";
 import { ConfigService } from "@nestjs/config";
-import { drizzle } from "drizzle-orm/node-postgres";
+import { NodePgDatabase, drizzle } from "drizzle-orm/node-postgres";
 import * as schema from "./schema/schema";
-import { ModuleRef } from "@nestjs/core";
+import { DbType } from "./schema/db-type";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 
 @Module({
@@ -20,17 +20,18 @@ import { migrate } from "drizzle-orm/node-postgres/migrator";
           ssl: false,
         });
 
-        return drizzle(pool, { schema });
+        const dbContext: DbType = drizzle(pool, { schema, logger: true });
+        return dbContext;
       },
     },
   ],
+  exports: [DB_CONTEXT],
 })
 export class DatabaseModule implements OnApplicationBootstrap {
-  constructor(private moduleRef: ModuleRef) {}
+  constructor(@Inject(DB_CONTEXT) private dbContext: NodePgDatabase) {}
 
   async onApplicationBootstrap() {
-    const dbContext = await this.moduleRef.resolve(DB_CONTEXT);
-
-    await migrate(dbContext, { migrationsFolder: "src/core/database/migrations" });
+    await migrate(this.dbContext, { migrationsFolder: "src/core/database/migrations" });
+    this.dbContext.transaction((tx) => null);
   }
 }

@@ -1,5 +1,5 @@
 {
-  "id": "5511011e-4f81-4366-b73c-7bbca1a32212",
+  "id": "c72d8fe0-6ded-4eee-b7b9-79f23f823464",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -18,13 +18,33 @@
           "name": "name",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "code": {
           "name": "code",
           "type": "char(3)",
           "primaryKey": false,
+          "notNull": true
+        },
+        "crest_url": {
+          "name": "crest_url",
+          "type": "text",
+          "primaryKey": false,
           "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "CURRENT_TIMESTAMP"
         }
       },
       "indexes": {},
@@ -37,11 +57,18 @@
           "columns": [
             "code"
           ]
+        },
+        "clubs_crest_url_unique": {
+          "name": "clubs_crest_url_unique",
+          "nullsNotDistinct": true,
+          "columns": [
+            "crest_url"
+          ]
         }
       }
     },
-    "player_sesons": {
-      "name": "player_sesons",
+    "player_seasons": {
+      "name": "player_seasons",
       "schema": "",
       "columns": {
         "id": {
@@ -66,26 +93,40 @@
           "name": "season_name",
           "type": "varchar(6)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "start_date": {
           "name": "start_date",
-          "type": "date",
+          "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "end_date": {
           "name": "end_date",
-          "type": "date",
+          "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "CURRENT_TIMESTAMP"
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "player_sesons_club_id_clubs_id_fk": {
-          "name": "player_sesons_club_id_clubs_id_fk",
-          "tableFrom": "player_sesons",
+        "player_seasons_club_id_clubs_id_fk": {
+          "name": "player_seasons_club_id_clubs_id_fk",
+          "tableFrom": "player_seasons",
           "tableTo": "clubs",
           "columnsFrom": [
             "club_id"
@@ -96,9 +137,9 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "player_sesons_player_id_players_id_fk": {
-          "name": "player_sesons_player_id_players_id_fk",
-          "tableFrom": "player_sesons",
+        "player_seasons_player_id_players_id_fk": {
+          "name": "player_seasons_player_id_players_id_fk",
+          "tableFrom": "player_seasons",
           "tableTo": "players",
           "columnsFrom": [
             "player_id"
@@ -112,8 +153,8 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "player_sesons_club_id_player_id_season_name_unique": {
-          "name": "player_sesons_club_id_player_id_season_name_unique",
+        "player_seasons_club_id_player_id_season_name_unique": {
+          "name": "player_seasons_club_id_player_id_season_name_unique",
           "nullsNotDistinct": false,
           "columns": [
             "club_id",
@@ -137,31 +178,45 @@
           "name": "name",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "birth_date": {
           "name": "birth_date",
-          "type": "date",
+          "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "country": {
           "name": "country",
           "type": "char(3)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "external_id": {
           "name": "external_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "image_url": {
           "name": "image_url",
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "CURRENT_TIMESTAMP"
         }
       },
       "indexes": {
@@ -185,7 +240,7 @@
         },
         "players_image_url_unique": {
           "name": "players_image_url_unique",
-          "nullsNotDistinct": false,
+          "nullsNotDistinct": true,
           "columns": [
             "image_url"
           ]

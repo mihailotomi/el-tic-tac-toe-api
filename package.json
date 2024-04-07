@@ -21,10 +21,12 @@
     "migrate": "cd ./src/core/database && npx sequelize-cli  db:migrate"
   },
   "dependencies": {
+    "@nestjs/axios": "^3.0.2",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.2",
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
+    "axios": "^1.6.8",
     "drizzle-orm": "^0.30.7",
     "pg": "^8.11.5",
     "reflect-metadata": "^0.1.13",
