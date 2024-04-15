@@ -27,11 +27,10 @@ import { migrate } from "drizzle-orm/node-postgres/migrator";
   ],
   exports: [DB_CONTEXT],
 })
-export class DatabaseModule implements OnApplicationBootstrap {
+export class DatabaseModule implements OnModuleInit {
   constructor(@Inject(DB_CONTEXT) private dbContext: NodePgDatabase) {}
 
-  async onApplicationBootstrap() {
+  async onModuleInit() {
     await migrate(this.dbContext, { migrationsFolder: "src/core/database/migrations" });
-    this.dbContext.transaction((tx) => null);
   }
 }
