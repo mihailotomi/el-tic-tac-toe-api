@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { RawClubDto } from "../dto/raw-club.dto";
+import { RawClubDto } from "../../core/gateway/dto/raw-club.dto";
 import { CreateClubDto } from "../dto/create-club.dto";
 
 @Injectable()

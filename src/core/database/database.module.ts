@@ -1,7 +1,7 @@
 import { Inject, Module, OnApplicationBootstrap, OnModuleInit } from "@nestjs/common";
 
 import { Pool } from "pg";
-import { DB_CONTEXT } from "./dependency-injection/injection-token";
+import { DB_CONTEXT } from "./constants/injection-token";
 import { ConfigService } from "@nestjs/config";
 import { NodePgDatabase, drizzle } from "drizzle-orm/node-postgres";
 import * as schema from "./schema/schema";
@@ -27,6 +27,7 @@ import { migrate } from "drizzle-orm/node-postgres/migrator";
   ],
   exports: [DB_CONTEXT],
 })
+
 export class DatabaseModule implements OnModuleInit {
   constructor(@Inject(DB_CONTEXT) private dbContext: NodePgDatabase) {}
 

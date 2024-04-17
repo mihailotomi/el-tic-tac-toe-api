@@ -1,35 +1,25 @@
 import { HttpService } from "@nestjs/axios";
-import { HttpException, Injectable } from "@nestjs/common";
+import { HttpException, Inject, Injectable } from "@nestjs/common";
 import { firstValueFrom } from "rxjs";
-import { RawClubDto } from "../dto/raw-club.dto";
+import { RawClubDto } from "../../core/gateway/dto/raw-club.dto";
 import { ClubRepository } from "../repository/club.repository";
 import { ClubMapperService } from "./club-mapper.service";
+import { EUROLEAGUE_GATEWAY } from "src/core/gateway/constants/injection-token";
+import { CompetitionApiGatewayProvider } from "src/core/gateway/providers/competition-api-gateway.provider";
 
 @Injectable()
 export class ClubService {
   constructor(
-    private httpService: HttpService,
+    @Inject(EUROLEAGUE_GATEWAY) private euroleagueGateway: CompetitionApiGatewayProvider,
     private clubRepository: ClubRepository,
     private clubMapper: ClubMapperService,
   ) {}
-
-  getClubsForSeason(seasonCode: string) {
-    try {
-      return firstValueFrom(
-        this.httpService.get<{ data: RawClubDto[]; total: number }>(
-          `https://api-live.euroleague.net/v2/competitions/E/sesons/${seasonCode}/clubs`,
-        ),
-      );
-    } catch (error) {
-      throw new HttpException(error.message || "", 400);
-    }
-  }
 
   populateClubs = async () => {
     for (let year = 2023; year >= 2000; year--) {
       const {
         data: { data: seasonClubsRaw },
-      } = await this.getClubsForSeason(`E${year}`);
+      } = await this.euroleagueGateway.getClubsForSeason(year);
 
       const clubPayloads = seasonClubsRaw.map(this.clubMapper.mapFromRaw);
       await this.clubRepository.insertClubs(clubPayloads);
