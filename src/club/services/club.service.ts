@@ -1,7 +1,4 @@
-import { HttpService } from "@nestjs/axios";
-import { HttpException, Inject, Injectable } from "@nestjs/common";
-import { firstValueFrom } from "rxjs";
-import { RawClubDto } from "../../core/gateway/dto/raw-club.dto";
+import { Inject, Injectable } from "@nestjs/common";
 import { ClubRepository } from "../repository/club.repository";
 import { ClubMapperService } from "./club-mapper.service";
 import { EUROLEAGUE_GATEWAY } from "src/core/gateway/constants/injection-token";
