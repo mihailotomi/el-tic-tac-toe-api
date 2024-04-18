@@ -18,7 +18,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "migrate": "cd ./src/core/database && npx sequelize-cli  db:migrate"
+    "migrations:generate": "cd ./src/core/database && npx drizzle-kit generate:pg --config ./drizzle.config.ts"
   },
   "dependencies": {
     "@nestjs/axios": "^3.0.2",

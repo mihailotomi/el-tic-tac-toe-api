@@ -2,6 +2,7 @@ import { HttpService } from "@nestjs/axios";
 import { HttpException, Injectable } from "@nestjs/common";
 import { firstValueFrom } from "rxjs";
 import { RawClubDto } from "../dto/raw-club.dto";
+import { RawPlayerSeasonDto } from "../dto/raw-player-season.dto";
 
 @Injectable()
 export class CompetitionApiGatewayProvider {
@@ -14,10 +15,24 @@ export class CompetitionApiGatewayProvider {
     try {
       return firstValueFrom(
         this.httpService.get<{ data: RawClubDto[]; total: number }>(
-          `https://api-live.euroleague.net/v2/competitions/${this.competitionCode}/sesons/${this.competitionCode}${season}/clubs`,
+          `/competitions/${this.competitionCode}/seasons/${this.competitionCode}${season}/clubs`,
         ),
       );
     } catch (error) {
+      // TODO: throw custom exception
+      throw new HttpException(error.message || "", 400);
+    }
+  }
+
+  getPlayersForSeason(season: number){
+    try {
+      return firstValueFrom(
+        this.httpService.get<{ data: RawPlayerSeasonDto[]; total: number }>(
+          `/competitions/${this.competitionCode}/seasons/${this.competitionCode}${season}/people?personType=J`,
+        ),
+      );
+    } catch (error) {
+      // TODO: throw custom exception
       throw new HttpException(error.message || "", 400);
     }
   }

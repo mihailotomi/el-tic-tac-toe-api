@@ -17,17 +17,17 @@ import { CompetitionApiGatewayProvider } from "./providers/competition-api-gatew
   providers: [
     {
       provide: EUROLEAGUE_GATEWAY,
-      useFactory: (httpService: HttpService, competitionCode: string) => {
-        return new CompetitionApiGatewayProvider(httpService, competitionCode);
+      useFactory: (httpService: HttpService) => {
+        return new CompetitionApiGatewayProvider(httpService, "E");
       },
-      inject: [HttpService, "E"],
+      inject: [HttpService],
     },
     {
       provide: EUROCUP_GATEWAY,
-      useFactory: (httpService: HttpService, competitionCode: string) => {
-        return new CompetitionApiGatewayProvider(httpService, competitionCode);
+      useFactory: (httpService: HttpService) => {
+        return new CompetitionApiGatewayProvider(httpService, "U");
       },
-      inject: [HttpService, "U"],
+      inject: [HttpService],
     },
   ],
   exports: [EUROLEAGUE_GATEWAY, EUROCUP_GATEWAY],

@@ -6,7 +6,7 @@ export default defineConfig({
   dbCredentials: {
     connectionString: process.env.CONNECTION_STRING,
   },
-  verbose: true,
+  verbose: false,
   strict: true,
-  out:"./migrations"
+  out: "./migrations",
 });

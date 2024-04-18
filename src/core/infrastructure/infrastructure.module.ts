@@ -1,9 +1,6 @@
-import { Global, Module } from "@nestjs/common";
+import { ConsoleLogger, Global, Module } from "@nestjs/common";
 import { HttpExceptionFilter } from "./exceptions/filters/HttpExceptionFilter";
 
 @Global()
-@Module({})
-export class InfrastructureModule {
-  providers: [HttpExceptionFilter];
-  exports: [HttpExceptionFilter];
-}
+@Module({ providers: [HttpExceptionFilter, ConsoleLogger], exports: [HttpExceptionFilter] })
+export class InfrastructureModule {}

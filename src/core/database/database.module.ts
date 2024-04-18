@@ -18,9 +18,10 @@ import { migrate } from "drizzle-orm/node-postgres/migrator";
         const pool = new Pool({
           connectionString,
           ssl: false,
+          
         });
 
-        const dbContext: DbType = drizzle(pool, { schema, logger: true });
+        const dbContext: DbType = drizzle(pool, { schema, logger: false });
         return dbContext;
       },
     },

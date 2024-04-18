@@ -5,7 +5,7 @@ import { HttpExceptionFilter } from "./core/infrastructure/exceptions/filters/Ht
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: ["error", "warn"] });
 
-  const exceptionFilter = app.get(HttpExceptionFilter);
+  const exceptionFilter: HttpExceptionFilter = app.get(HttpExceptionFilter);
   app.useGlobalFilters(exceptionFilter);
 
   await app.listen(3000);

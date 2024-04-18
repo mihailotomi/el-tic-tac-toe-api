@@ -8,7 +8,6 @@ export const players = pgTable(
     name: text("name").notNull(),
     birthDate: timestamp("birth_date").notNull(),
     country: char("country", { length: 3 }).notNull(),
-    externalId: integer("external_id").notNull(),
     imageUrl: text("image_url"),
     createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
     updatedAt: timestamp("updated_at")
@@ -16,7 +15,7 @@ export const players = pgTable(
       .$onUpdate(() => new Date()),
   },
   (t) => ({
-    unqExternalId: unique().on(t.externalId),
+    unqNameBirthCountry: unique().on(t.name, t.birthDate, t.country),
     unqImage: unique().on(t.imageUrl).nullsNotDistinct(),
     nameIdx: index().on(t.name),
   }),
