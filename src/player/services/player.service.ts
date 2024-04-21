@@ -16,9 +16,11 @@ export class PlayerService {
     for (let year = 2023; year >= 2000; year--) {
       const {
         data: { data: playerSeasonListRaw },
+        // eslint-disable-next-line no-await-in-loop
       } = await this.euroleagueGateway.getPlayersForSeason(year);
 
       const playerSeasonPayloads = playerSeasonListRaw.map(this.playerMapper.mapFromRaw);
+      // eslint-disable-next-line no-await-in-loop
       await this.playerRepository.insertSeasonPlayers(playerSeasonPayloads);
     }
   };

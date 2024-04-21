@@ -14,7 +14,7 @@ import { InfrastructureModule } from "./core/infrastructure/infrastructure.modul
     ClubModule,
     ConfigModule.forRoot({ isGlobal: true, envFilePath: ".development.env" }),
     DatabaseModule,
-    InfrastructureModule
+    InfrastructureModule,
   ],
   controllers: [],
   providers: [ConsoleLogger],
@@ -27,13 +27,12 @@ export class AppModule implements OnApplicationBootstrap {
   ) {}
 
   async onApplicationBootstrap() {
-    this.logger.log("Populating clubs...")
+    this.logger.log("Populating clubs...");
     // await this.clubService.populateClubs();
-    this.logger.log("Successfully populated clubs...")
+    this.logger.log("Successfully populated clubs...");
 
-    this.logger.log("Populating players...")
+    this.logger.log("Populating players...");
     await this.playerService.populatePlayers();
-    this.logger.log("Successfully populated players...")
-
+    this.logger.log("Successfully populated players...");
   }
 }

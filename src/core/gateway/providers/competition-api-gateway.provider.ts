@@ -20,11 +20,11 @@ export class CompetitionApiGatewayProvider {
       );
     } catch (error) {
       // TODO: throw custom exception
-      throw new HttpException(error.message || "", 400);
+      throw new HttpException(error?.message || "", 400);
     }
   }
 
-  getPlayersForSeason(season: number){
+  getPlayersForSeason(season: number) {
     try {
       return firstValueFrom(
         this.httpService.get<{ data: RawPlayerSeasonDto[]; total: number }>(
@@ -33,7 +33,7 @@ export class CompetitionApiGatewayProvider {
       );
     } catch (error) {
       // TODO: throw custom exception
-      throw new HttpException(error.message || "", 400);
+      throw new HttpException(error?.message || "", 400);
     }
   }
 }

@@ -5,6 +5,7 @@ export class CreatePlayerSeasonDto {
     country: string;
     imageUrl: string;
   };
+
   playerSeason: {
     seasonName: string;
     startDate: Date;

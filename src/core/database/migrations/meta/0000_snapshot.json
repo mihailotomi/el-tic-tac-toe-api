@@ -54,16 +54,12 @@
         "clubs_code_unique": {
           "name": "clubs_code_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "code"
-          ]
+          "columns": ["code"]
         },
         "clubs_crest_url_unique": {
           "name": "clubs_crest_url_unique",
           "nullsNotDistinct": true,
-          "columns": [
-            "crest_url"
-          ]
+          "columns": ["crest_url"]
         }
       }
     },
@@ -128,12 +124,8 @@
           "name": "player_seasons_club_id_clubs_id_fk",
           "tableFrom": "player_seasons",
           "tableTo": "clubs",
-          "columnsFrom": [
-            "club_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["club_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -141,12 +133,8 @@
           "name": "player_seasons_player_id_players_id_fk",
           "tableFrom": "player_seasons",
           "tableTo": "players",
-          "columnsFrom": [
-            "player_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["player_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -156,11 +144,7 @@
         "player_seasons_club_id_player_id_season_name_unique": {
           "name": "player_seasons_club_id_player_id_season_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "club_id",
-            "player_id",
-            "season_name"
-          ]
+          "columns": ["club_id", "player_id", "season_name"]
         }
       }
     },
@@ -222,9 +206,7 @@
       "indexes": {
         "players_name_index": {
           "name": "players_name_index",
-          "columns": [
-            "name"
-          ],
+          "columns": ["name"],
           "isUnique": false
         }
       },
@@ -234,16 +216,12 @@
         "players_external_id_unique": {
           "name": "players_external_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "external_id"
-          ]
+          "columns": ["external_id"]
         },
         "players_image_url_unique": {
           "name": "players_image_url_unique",
           "nullsNotDistinct": true,
-          "columns": [
-            "image_url"
-          ]
+          "columns": ["image_url"]
         }
       }
     }

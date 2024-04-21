@@ -1,9 +1,10 @@
 import { Module } from "@nestjs/common";
+
 import { ClubRepository } from "./repository/club.repository";
-import { DatabaseModule } from "src/core/database/database.module";
+import { DatabaseModule } from "../core/database/database.module";
 import { ClubService } from "./services/club.service";
 import { ClubMapperService } from "./services/club-mapper.service";
-import { GatewayModule } from "src/core/gateway/gateway.module";
+import { GatewayModule } from "../core/gateway/gateway.module";
 
 @Module({
   imports: [DatabaseModule, GatewayModule],

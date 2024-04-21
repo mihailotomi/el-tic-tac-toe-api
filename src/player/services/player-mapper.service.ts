@@ -7,8 +7,8 @@ export class PlayerMapperService {
   mapFromRaw = (rawPlayerSeason: RawPlayerSeasonDto): CreatePlayerSeasonDto => {
     return {
       player: {
-        name: rawPlayerSeason.person.name,
-        country: rawPlayerSeason.person.country.code,
+        name: rawPlayerSeason.person?.name,
+        country: rawPlayerSeason.person?.country?.code,
         birthDate: new Date(rawPlayerSeason.person.birthDate),
         imageUrl: rawPlayerSeason.images.headshot,
       },

@@ -10,7 +10,8 @@ import { CompetitionApiGatewayProvider } from "./providers/competition-api-gatew
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        baseURL: configService.get("EUROLEAGUE_API_URL") + configService.get("EUROLEAGUE_API_VERSION"),
+        baseURL: ((configService.get("EUROLEAGUE_API_URL") as string) +
+          configService.get("EUROLEAGUE_API_VERSION")) as string,
       }),
     }),
   ],

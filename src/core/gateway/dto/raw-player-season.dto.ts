@@ -7,14 +7,19 @@ export class RawPlayerSeasonDto {
     };
     birthDate: string;
   };
+
   startDate: string;
+
   endDate: string;
+
   images: {
     headshot: string;
   };
+
   club: {
     code: string;
   };
+
   season: {
     code: string;
   };
