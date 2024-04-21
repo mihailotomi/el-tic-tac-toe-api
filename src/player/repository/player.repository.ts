@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { Inject, Injectable } from "@nestjs/common";
 import { DB_CONTEXT } from "src/core/database/constants/injection-token";
 import { DbType } from "src/core/database/schema/db-type";
@@ -13,7 +13,7 @@ export class PlayerRepository {
     return this.dbContext.transaction(async (tx) => {
       await tx
         .insert(players)
-        .values(playerSeasonPayload.map((ps) => ps.player))
+        .values(playerSeasonPayload.map((ps) => ps.player).filter((player) => player?.country && player?.birthDate))
         .onConflictDoNothing();
 
       await Promise.all(
@@ -22,13 +22,13 @@ export class PlayerRepository {
             .select({ id: players.id })
             .from(players)
             .where(
-              and(eq(players.name, playerSeason.player.name), eq(players.birthDate, playerSeason.player.birthDate)),
+              and(eq(players.name, playerSeason.player?.name), eq(players.birthDate, playerSeason.player?.birthDate)),
             );
 
           const clubData = await tx
             .select({ id: clubs.id })
             .from(clubs)
-            .where(eq(clubs.code, playerSeason.playerSeason.clubCode));
+            .where(eq(clubs.code, playerSeason.playerSeason?.clubCode));
 
           const { startDate, endDate, seasonName } = playerSeason.playerSeason;
 

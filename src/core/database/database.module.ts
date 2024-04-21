@@ -17,6 +17,7 @@ import { DbType } from "./schema/db-type";
         const connectionString = configService.get("CONNECTION_STRING") as string;
         const pool = new Pool({
           connectionString,
+          keepAlive: true,
           ssl: false,
         });
 
