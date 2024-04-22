@@ -9,11 +9,38 @@ import { CreatePlayerSeasonDto } from "../dto/create-player-season.dto";
 export class PlayerRepository {
   constructor(@Inject(DB_CONTEXT) private dbContext: DbType) {}
 
+  nameSearchAutocomplete = async ({ search, limit }: { search: string; limit: number }) => {
+    return this.dbContext
+      .select()
+      .from(players)
+      .where(
+        sql`
+        (CONCAT(${players.firstName}, ' ', ${players.lastName}) ILIKE '%${search}%') 
+        OR (CONCAT(${players.lastName}, ' ', ${players.firstName}) ILIKE '%${search}%')`,
+      )
+      .orderBy(players.lastName)
+      .limit(limit);
+  };
+
   insertSeasonPlayers = async (playerSeasonPayload: CreatePlayerSeasonDto[]) => {
     return this.dbContext.transaction(async (tx) => {
       await tx
         .insert(players)
-        .values(playerSeasonPayload.map((ps) => ps.player).filter((player) => player?.country && player?.birthDate))
+        .values(
+          playerSeasonPayload
+            .map((ps) => ps.player)
+            .map((p) => {
+              const [lastName, firstName] = p.name.split(", ");
+              const { name: _name, ...newPlayer } = p;
+
+              return {
+                ...newPlayer,
+                firstName,
+                lastName,
+              };
+            })
+            .filter((p) => p?.country && p?.birthDate && p?.firstName && p?.lastName),
+        )
         .onConflictDoNothing();
 
       await Promise.all(
@@ -22,7 +49,10 @@ export class PlayerRepository {
             .select({ id: players.id })
             .from(players)
             .where(
-              and(eq(players.name, playerSeason.player?.name), eq(players.birthDate, playerSeason.player?.birthDate)),
+              and(
+                eq(sql`CONCAT(${players.lastName}, ', ', ${players.firstName})`, playerSeason.player?.name),
+                eq(players.birthDate, playerSeason.player?.birthDate),
+              ),
             );
 
           const clubData = await tx

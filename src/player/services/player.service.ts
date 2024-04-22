@@ -23,7 +23,7 @@ export class PlayerService {
 
         const playerSeasonPayloads = playerSeasonListRaw.map(this.playerMapper.mapFromRaw);
 
-        return await this.playerRepository.insertSeasonPlayers(playerSeasonPayloads);
+        return this.playerRepository.insertSeasonPlayers(playerSeasonPayloads);
       }),
     );
   };
