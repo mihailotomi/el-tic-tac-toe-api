@@ -1,4 +1,4 @@
-export class RawPlayerSeasonDto {
+export class ApiPlayerSeasonDto {
   person: {
     name: string;
     country: {

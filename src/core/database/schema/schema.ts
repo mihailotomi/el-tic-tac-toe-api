@@ -17,7 +17,7 @@ export const players = pgTable(
   },
   (t) => ({
     unqNameBirthCountry: unique().on(t.firstName, t.lastName, t.birthDate, t.country),
-    // unqImage: unique().on(t.imageUrl).nullsNotDistinct(),
+    unqImage: unique().on(t.imageUrl).nullsNotDistinct(),
     nameIdx: index().on(t.firstName, t.lastName),
   }),
 );

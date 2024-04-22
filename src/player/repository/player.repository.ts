@@ -4,19 +4,20 @@ import { DB_CONTEXT } from "src/core/database/constants/injection-token";
 import { DbType } from "src/core/database/schema/db-type";
 import { clubs, playerSeasons, players } from "src/core/database/schema/schema";
 import { CreatePlayerSeasonDto } from "../dto/create-player-season.dto";
+import { RawPlayerDto } from "../dto/raw-player.dto";
 
 @Injectable()
 export class PlayerRepository {
   constructor(@Inject(DB_CONTEXT) private dbContext: DbType) {}
 
-  nameSearchAutocomplete = async ({ search, limit }: { search: string; limit: number }) => {
+  nameSearchAutocomplete = async ({ search, limit }: { search: string; limit: number }): Promise<RawPlayerDto[]> => {
     return this.dbContext
       .select()
       .from(players)
       .where(
-        sql`
-        (CONCAT(${players.firstName}, ' ', ${players.lastName}) ILIKE '%${search}%') 
-        OR (CONCAT(${players.lastName}, ' ', ${players.firstName}) ILIKE '%${search}%')`,
+        sql.raw(`
+        (CONCAT(first_name, ' ', last_name) ILIKE '%${search}%') 
+        OR (CONCAT(last_name, ' ',first_name) ILIKE '%${search}%')`),
       )
       .orderBy(players.lastName)
       .limit(limit);

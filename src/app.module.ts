@@ -32,7 +32,7 @@ export class AppModule implements OnApplicationBootstrap {
     this.logger.log("Successfully populated clubs...");
 
     this.logger.log("Populating players...");
-    await this.playerService.populatePlayers();
+    // await this.playerService.populatePlayers();
     this.logger.log("Successfully populated players...");
   }
 }

@@ -2,7 +2,7 @@ import { HttpService } from "@nestjs/axios";
 import { HttpException, Injectable } from "@nestjs/common";
 import { firstValueFrom } from "rxjs";
 import { RawClubDto } from "../dto/raw-club.dto";
-import { RawPlayerSeasonDto } from "../dto/raw-player-season.dto";
+import { ApiPlayerSeasonDto } from "../dto/api-player-season.dto";
 
 @Injectable()
 export class CompetitionApiGatewayProvider {
@@ -27,7 +27,7 @@ export class CompetitionApiGatewayProvider {
   getPlayersForSeason(season: number) {
     try {
       return firstValueFrom(
-        this.httpService.get<{ data: RawPlayerSeasonDto[]; total: number }>(
+        this.httpService.get<{ data: ApiPlayerSeasonDto[]; total: number }>(
           `/competitions/${this.competitionCode}/seasons/${this.competitionCode}${season}/people?personType=J`,
         ),
       );

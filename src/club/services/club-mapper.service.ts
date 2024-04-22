@@ -4,7 +4,7 @@ import { CreateClubDto } from "../dto/create-club.dto";
 
 @Injectable()
 export class ClubMapperService {
-  mapFromRaw = (rawClub: RawClubDto): CreateClubDto => {
+  mapFromApi = (rawClub: RawClubDto): CreateClubDto => {
     return {
       name: rawClub.name,
       code: rawClub.code,
