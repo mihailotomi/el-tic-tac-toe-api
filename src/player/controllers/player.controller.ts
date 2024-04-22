@@ -11,7 +11,9 @@ import { PlayerService } from "../services/player.service";
 import { SearchPlayerDto } from "../dto/search-player.dto";
 import { Player } from "../models/player";
 import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags('players')
 @Controller("players")
 export class PlayerController {
   constructor(private playerService: PlayerService) {}
@@ -28,6 +30,8 @@ export class PlayerController {
   @Get("/check-match")
   @UsePipes(new ValidationPipe({ transform: true }))
   async checkMatch(@Query() query: CheckPlayerMatchDto) {
-    return this.playerService.checkMatch(query);
+    console.log(query);
+    
+    // return this.playerService.checkMatch(query);
   }
 }
