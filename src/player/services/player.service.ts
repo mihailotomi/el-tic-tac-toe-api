@@ -5,6 +5,7 @@ import { PlayerRepository } from "../repository/player.repository";
 import { PlayerMapperService } from "./player-mapper.service";
 import { SearchPlayerDto } from "../dto/search-player.dto";
 import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
+import { PlayerDto } from "../dto/player.dto";
 
 @Injectable()
 export class PlayerService {
@@ -19,7 +20,7 @@ export class PlayerService {
     return { isMatch: playedForClubs };
   };
 
-  searchAutocomplete = async ({ search }: SearchPlayerDto) => {
+  searchAutocomplete = async ({ search }: SearchPlayerDto): Promise<PlayerDto[]> => {
     const players = await this.playerRepository.nameSearchAutocomplete({ search, limit: 10 });
     return players.map(this.playerMapper.toDto);
   };

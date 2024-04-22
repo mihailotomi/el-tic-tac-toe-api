@@ -4,14 +4,14 @@ import { DB_CONTEXT } from "src/core/database/constants/injection-token";
 import { DbType } from "src/core/database/schema/db-type";
 import { clubs, playerSeasons, players } from "src/core/database/schema/schema";
 import { CreatePlayerSeasonDto } from "../dto/create-player-season.dto";
-import { RawPlayerDto } from "../dto/player.dto";
 import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
+import { Player } from "../models/player";
 
 @Injectable()
 export class PlayerRepository {
   constructor(@Inject(DB_CONTEXT) private dbContext: DbType) {}
 
-  nameSearchAutocomplete = async ({ search, limit }: { search: string; limit: number }): Promise<RawPlayerDto[]> => {
+  nameSearchAutocomplete = async ({ search, limit }: { search: string; limit: number }): Promise<Player[]> => {
     return this.dbContext
       .select()
       .from(players)

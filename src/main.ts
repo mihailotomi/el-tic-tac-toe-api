@@ -1,7 +1,7 @@
 import { NestFactory } from "@nestjs/core";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { AppModule } from "./app.module";
 import { HttpExceptionFilter } from "./core/infrastructure/exceptions/filters/HttpExceptionFilter";
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: ["error", "warn"] });
@@ -13,7 +13,7 @@ async function bootstrap() {
     .setTitle("Euroleague tic-tac-toe")
     .setDescription("A tic-tac-toe with Euroleague players")
     .setVersion("1.0")
-    .addTag("players")
+    .addTag("players", "grids")
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, document);

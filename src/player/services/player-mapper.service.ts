@@ -8,7 +8,7 @@ import { PlayerDto } from "../dto/player.dto";
 export class PlayerMapperService {
   toDto = (player: Player): PlayerDto => {
     const playerDto = new PlayerDto();
-    Object.assign(player, playerDto);
+    Object.assign(playerDto, player);
 
     return playerDto;
   };

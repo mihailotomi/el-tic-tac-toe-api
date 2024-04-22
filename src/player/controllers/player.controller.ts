@@ -7,11 +7,11 @@ import {
   UsePipes,
   ValidationPipe,
 } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { PlayerService } from "../services/player.service";
 import { SearchPlayerDto } from "../dto/search-player.dto";
 import { Player } from "../models/player";
 import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
-import { ApiTags } from "@nestjs/swagger";
 
 @ApiTags('players')
 @Controller("players")
