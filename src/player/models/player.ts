@@ -7,11 +7,6 @@ export class Player {
 
   lastName: string;
 
-  @Expose()
-  get fullName(): string {
-    return `${this.firstName} ${this.lastName}`;
-  }
-
   birthDate: Date;
 
   country: string;

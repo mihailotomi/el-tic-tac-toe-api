@@ -1,8 +1,8 @@
 import { HttpService } from "@nestjs/axios";
 import { HttpException, Injectable } from "@nestjs/common";
 import { firstValueFrom } from "rxjs";
-import { RawClubDto } from "../dto/raw-club.dto";
-import { ApiPlayerSeasonDto } from "../dto/api-player-season.dto";
+import { RawClubDto } from "../dto/gateway-club.dto";
+import { ApiPlayerSeasonDto } from "../dto/gateway-player-season.dto";
 
 @Injectable()
 export class CompetitionApiGatewayProvider {

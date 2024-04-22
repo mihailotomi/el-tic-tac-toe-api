@@ -32,6 +32,6 @@ export class PlayerController {
   async checkMatch(@Query() query: CheckPlayerMatchDto) {
     console.log(query);
     
-    // return this.playerService.checkMatch(query);
+    return this.playerService.checkMatch(query);
   }
 }

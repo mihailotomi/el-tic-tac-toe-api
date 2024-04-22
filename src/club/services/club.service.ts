@@ -20,7 +20,7 @@ export class ClubService {
         // eslint-disable-next-line no-await-in-loop
       } = await this.euroleagueGateway.getClubsForSeason(year);
 
-      const clubPayloads = seasonClubsRaw.map(this.clubMapper.mapFromApi);
+      const clubPayloads = seasonClubsRaw.map(this.clubMapper.apiToCreateDto);
       // eslint-disable-next-line no-await-in-loop
       await this.clubRepository.insertClubs(clubPayloads);
     }

@@ -1,14 +1,14 @@
 import { Injectable } from "@nestjs/common";
-import { RawClubDto } from "../../core/gateway/dto/raw-club.dto";
+import { GatewayClubDto } from "../../core/gateway/dto/gateway-club.dto";
 import { CreateClubDto } from "../dto/create-club.dto";
 
 @Injectable()
 export class ClubMapperService {
-  mapFromApi = (rawClub: RawClubDto): CreateClubDto => {
+  gatewayToCreateDto = (gatewayClub: GatewayClubDto): CreateClubDto => {
     return {
-      name: rawClub.name,
-      code: rawClub.code,
-      crestUrl: rawClub?.images?.crest,
+      name: gatewayClub.name,
+      code: gatewayClub.code,
+      crestUrl: gatewayClub?.images?.crest,
     };
   };
 }

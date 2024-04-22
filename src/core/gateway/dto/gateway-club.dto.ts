@@ -1,4 +1,4 @@
-export class RawClubDto {
+export class GatewayClubDto {
   code: string;
 
   name: string;

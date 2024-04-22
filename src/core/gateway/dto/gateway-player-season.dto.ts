@@ -1,4 +1,4 @@
-export class ApiPlayerSeasonDto {
+export class GatewayPlayerSeasonDto {
   person: {
     name: string;
     country: {

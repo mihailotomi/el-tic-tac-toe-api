@@ -1,31 +1,31 @@
 import { Injectable } from "@nestjs/common";
-import { ApiPlayerSeasonDto } from "src/core/gateway/dto/api-player-season.dto";
+import { GatewayPlayerSeasonDto } from "src/core/gateway/dto/gateway-player-season.dto";
 import { CreatePlayerSeasonDto } from "../dto/create-player-season.dto";
 import { Player } from "../models/player";
-import { RawPlayerDto } from "../dto/raw-player.dto";
+import { PlayerDto } from "../dto/player.dto";
 
 @Injectable()
 export class PlayerMapperService {
-  fromRaw = (rawPlayer: RawPlayerDto): Player => {
-    const player = new Player();
-    Object.assign(player, rawPlayer);
-    
-    return player;
+  toDto = (player: Player): PlayerDto => {
+    const playerDto = new PlayerDto();
+    Object.assign(player, playerDto);
+
+    return playerDto;
   };
 
-  apiToCreateDto = (apiPlayerSeason: ApiPlayerSeasonDto): CreatePlayerSeasonDto => {
+  apiToCreateDto = (gatewatPlayerSeason: GatewayPlayerSeasonDto): CreatePlayerSeasonDto => {
     return {
       player: {
-        name: apiPlayerSeason.person?.name,
-        country: apiPlayerSeason.person?.country?.code,
-        birthDate: new Date(apiPlayerSeason.person.birthDate),
-        imageUrl: apiPlayerSeason.images.headshot,
+        name: gatewatPlayerSeason.person?.name,
+        country: gatewatPlayerSeason.person?.country?.code,
+        birthDate: new Date(gatewatPlayerSeason.person.birthDate),
+        imageUrl: gatewatPlayerSeason.images.headshot,
       },
       playerSeason: {
-        startDate: new Date(apiPlayerSeason.startDate),
-        endDate: new Date(apiPlayerSeason.endDate),
-        clubCode: apiPlayerSeason.club.code,
-        seasonName: apiPlayerSeason.season.code,
+        startDate: new Date(gatewatPlayerSeason.startDate),
+        endDate: new Date(gatewatPlayerSeason.endDate),
+        clubCode: gatewatPlayerSeason.club.code,
+        seasonName: gatewatPlayerSeason.season.code,
       },
     };
   };

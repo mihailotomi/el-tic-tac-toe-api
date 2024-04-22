@@ -7,6 +7,7 @@ import { DatabaseModule } from "./core/database/database.module";
 import { ClubService } from "./club/services/club.service";
 import { PlayerService } from "./player/services/player.service";
 import { InfrastructureModule } from "./core/infrastructure/infrastructure.module";
+import { GridModule } from './grid/grid.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { InfrastructureModule } from "./core/infrastructure/infrastructure.modul
     ConfigModule.forRoot({ isGlobal: true, envFilePath: ".development.env" }),
     DatabaseModule,
     InfrastructureModule,
+    GridModule,
   ],
   controllers: [],
   providers: [ConsoleLogger],

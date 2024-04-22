@@ -20,8 +20,8 @@ export class PlayerService {
   };
 
   searchAutocomplete = async ({ search }: SearchPlayerDto) => {
-    const rawPlayers = await this.playerRepository.nameSearchAutocomplete({ search, limit: 10 });
-    return rawPlayers.map(this.playerMapper.fromRaw);
+    const players = await this.playerRepository.nameSearchAutocomplete({ search, limit: 10 });
+    return players.map(this.playerMapper.toDto);
   };
 
   populatePlayers = async () => {
