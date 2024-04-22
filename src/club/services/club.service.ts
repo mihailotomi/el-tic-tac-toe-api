@@ -4,6 +4,7 @@ import { ClubMapperService } from "./club-mapper.service";
 import { EUROLEAGUE_GATEWAY } from "../../core/gateway/constants/injection-token";
 import { CompetitionApiGatewayProvider } from "../../core/gateway/providers/competition-api-gateway.provider";
 import { GridDifficulty } from "../../grid/enums/grid-difficulty";
+import { Club } from "../models/club";
 
 @Injectable()
 export class ClubService {
@@ -23,7 +24,13 @@ export class ClubService {
 
       case GridDifficulty.HARD:
         return 35;
+      default:
+        return 15;
     }
+  };
+
+  getForGridConstraint = async ({ constraintClubs }: { constraintClubs: Club[] }) => {
+    return this.clubRepository.getGridClubsWithConstraint({ constraintClubs });
   };
 
   getForGridRandom = async ({
@@ -33,12 +40,10 @@ export class ClubService {
     difficulty?: GridDifficulty;
     amount?: number;
   }) => {
-    const clubs = await this.clubRepository.getRandomGridClubs({
+    return this.clubRepository.getRandomGridClubs({
       difficultyLimit: this.clubDifficultyLimit(difficulty),
       amount,
     });
-        
-    return clubs.map(this.clubMapper.toDto);
   };
 
   populateClubs = async () => {

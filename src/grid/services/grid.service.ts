@@ -5,7 +5,10 @@ import { ClubService } from "src/club/services/club.service";
 export class GridService {
   constructor(private clubService: ClubService) {}
 
-  generateGrid = () => {
-    return this.clubService.getForGridRandom({});
+  generateGrid = async () => {
+    const x = await this.clubService.getForGridRandom({});
+    const y = await this.clubService.getForGridConstraint({ constraintClubs: x });
+
+    return { x, y };
   };
 }

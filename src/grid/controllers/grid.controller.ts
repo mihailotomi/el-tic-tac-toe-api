@@ -1,6 +1,6 @@
 import { Controller, Get } from "@nestjs/common";
-import { GridService } from "../services/grid.service";
 import { ApiTags } from "@nestjs/swagger";
+import { GridService } from "../services/grid.service";
 
 @ApiTags("grids")
 @Controller("grids")

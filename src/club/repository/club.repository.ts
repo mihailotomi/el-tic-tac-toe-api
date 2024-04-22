@@ -11,6 +11,45 @@ import { Club } from "../models/club";
 export class ClubRepository {
   constructor(@Inject(DB_CONTEXT) private dbContext: DbType) {}
 
+  getGridClubsWithConstraint = async ({
+    constraintClubs,
+  }: {
+    difficultyLimit?: number;
+    amount?: number;
+    constraintClubs: Club[];
+  }): Promise<Club[]> => {
+    const constraintClubSqs = constraintClubs.map((c, i) => {
+      const ps1 = alias(playerSeasons, "ps1");
+      const ps2 = alias(playerSeasons, "ps2");
+
+      return this.dbContext
+        .select({
+          id: ps1.clubId,
+          num: count().as(`num${i}`),
+        })
+        .from(ps1)
+        .innerJoin(ps2, and(eq(ps1.playerId, ps2.playerId), eq(ps2.clubId, c.id), ne(ps1.clubId, c.id)))
+        .groupBy(ps1.clubId)
+        .as(`temp${i}`);
+    });
+
+    return this.dbContext
+      .select({
+        id: clubs.id,
+        name: clubs.name,
+        code: clubs.code,
+        crestUrl: clubs.crestUrl,
+        createdAt: clubs.createdAt,
+        updatedAt: clubs.updatedAt,
+      })
+      .from(constraintClubSqs[0])
+      .innerJoin(constraintClubSqs[1], eq(constraintClubSqs[1].id, constraintClubSqs[0].id))
+      .innerJoin(constraintClubSqs[2], eq(constraintClubSqs[2].id, constraintClubSqs[0].id))
+      .innerJoin(clubs, eq(clubs.id, constraintClubSqs[0].id))
+      .orderBy(sql`random()`)
+      .limit(3);
+  };
+
   getRandomGridClubs = async ({
     difficultyLimit = 15,
     amount = 3,
@@ -29,7 +68,6 @@ export class ClubRepository {
         crestUrl: clubs.crestUrl,
         createdAt: clubs.createdAt,
         updatedAt: clubs.updatedAt,
-        num: count().as("num")
       })
       .from(ps1)
       .innerJoin(ps2, and(eq(ps1.playerId, ps2.playerId), ne(ps1.clubId, ps2.clubId)))
