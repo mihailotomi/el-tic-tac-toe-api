@@ -9,6 +9,8 @@ import {
 } from "@nestjs/common";
 import { PlayerService } from "../services/player.service";
 import { SearchPlayerDto } from "../dto/search-player.dto";
+import { Player } from "../models/player";
+import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
 
 @Controller("players")
 export class PlayerController {
@@ -16,10 +18,16 @@ export class PlayerController {
 
   @Get("/search-autocomplete")
   @UsePipes(new ValidationPipe({ transform: true }))
-  // @UseInterceptors(ClassSerializerInterceptor)
-  async searchAutocomplete(@Query() query: SearchPlayerDto): Promise<any> {
+  @UseInterceptors(ClassSerializerInterceptor)
+  async searchAutocomplete(@Query() query: SearchPlayerDto): Promise<Player[]> {
     console.log(query);
-    
+
     return this.playerService.searchAutocomplete(query);
+  }
+
+  @Get("/check-match")
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async checkMatch(@Query() query: CheckPlayerMatchDto) {
+    return this.playerService.checkMatch(query);
   }
 }

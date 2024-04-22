@@ -1,10 +1,11 @@
-import { and, eq, sql } from "drizzle-orm";
+import { SQL, and, countDistinct, eq, inArray, sql } from "drizzle-orm";
 import { Inject, Injectable } from "@nestjs/common";
 import { DB_CONTEXT } from "src/core/database/constants/injection-token";
 import { DbType } from "src/core/database/schema/db-type";
 import { clubs, playerSeasons, players } from "src/core/database/schema/schema";
 import { CreatePlayerSeasonDto } from "../dto/create-player-season.dto";
 import { RawPlayerDto } from "../dto/raw-player.dto";
+import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
 
 @Injectable()
 export class PlayerRepository {
@@ -21,6 +22,15 @@ export class PlayerRepository {
       )
       .orderBy(players.lastName)
       .limit(limit);
+  };
+
+  validatePlayerClubHistory = async ({ clubIds, playerId }: CheckPlayerMatchDto): Promise<boolean> => {
+    const [result] = await this.dbContext
+      .select({ played: eq(countDistinct(playerSeasons.clubId), clubIds.length) as SQL<boolean> })
+      .from(playerSeasons)
+      .where(and(eq(playerSeasons.playerId, playerId), inArray(playerSeasons.clubId, clubIds)));
+
+    return result.played;
   };
 
   insertSeasonPlayers = async (playerSeasonPayload: CreatePlayerSeasonDto[]) => {

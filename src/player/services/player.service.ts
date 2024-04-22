@@ -4,6 +4,7 @@ import { CompetitionApiGatewayProvider } from "src/core/gateway/providers/compet
 import { PlayerRepository } from "../repository/player.repository";
 import { PlayerMapperService } from "./player-mapper.service";
 import { SearchPlayerDto } from "../dto/search-player.dto";
+import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
 
 @Injectable()
 export class PlayerService {
@@ -12,6 +13,11 @@ export class PlayerService {
     private playerRepository: PlayerRepository,
     private playerMapper: PlayerMapperService,
   ) {}
+
+  checkMatch = async ({ clubIds, playerId }: CheckPlayerMatchDto): Promise<{ isMatch: boolean }> => {
+    const playedForClubs = await this.playerRepository.validatePlayerClubHistory({ clubIds, playerId });
+    return { isMatch: playedForClubs };
+  };
 
   searchAutocomplete = async ({ search }: SearchPlayerDto) => {
     const rawPlayers = await this.playerRepository.nameSearchAutocomplete({ search, limit: 10 });

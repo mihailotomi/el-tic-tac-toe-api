@@ -15,14 +15,17 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     this.logger.error("Following error occured:");
     this.logger.error(exception.message);
+
     this.logger.warn(exception.stack);
     this.logger.resetContext();
+
+    const errorResponse = exception.getResponse() as { message?: string | string[] };
 
     response.status(status).json({
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
-      message: exception.message,
+      message: errorResponse?.message,
     });
   }
 }
