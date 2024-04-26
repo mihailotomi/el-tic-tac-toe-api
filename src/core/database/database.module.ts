@@ -21,7 +21,7 @@ import { DbType } from "./schema/db-type";
           ssl: false,
         });
 
-        const dbContext: DbType = drizzle(pool, { schema, logger: true });
+        const dbContext: DbType = drizzle(pool, { schema, logger: false });
         return dbContext;
       },
     },

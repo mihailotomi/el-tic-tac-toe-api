@@ -16,7 +16,7 @@ async function bootstrap() {
     .addTag("players", "grids")
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api", app, document);
+  SwaggerModule.setup("api", app, document); 
 
   app.enableCors({
     allowedHeaders: '*',

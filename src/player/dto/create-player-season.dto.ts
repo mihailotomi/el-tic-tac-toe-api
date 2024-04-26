@@ -3,7 +3,7 @@ export class CreatePlayerSeasonDto {
     name: string;
     birthDate: Date;
     country: string;
-    imageUrl: string;
+    imageUrl?: string;
   };
 
   playerSeason: {

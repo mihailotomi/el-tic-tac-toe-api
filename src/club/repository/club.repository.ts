@@ -46,7 +46,7 @@ export class ClubRepository {
       .innerJoin(constraintClubSqs[1], eq(constraintClubSqs[1].id, constraintClubSqs[0].id))
       .innerJoin(constraintClubSqs[2], eq(constraintClubSqs[2].id, constraintClubSqs[0].id))
       .innerJoin(clubs, eq(clubs.id, constraintClubSqs[0].id))
-      .orderBy(sql`random()`)
+      .orderBy(sql`num1 DESC`)
       .limit(3);
   };
 

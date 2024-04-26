@@ -19,7 +19,7 @@ export class PlayerMapperService {
         name: gatewatPlayerSeason.person?.name,
         country: gatewatPlayerSeason.person?.country?.code,
         birthDate: new Date(gatewatPlayerSeason.person.birthDate),
-        imageUrl: gatewatPlayerSeason.images.headshot,
+        imageUrl: gatewatPlayerSeason?.images && gatewatPlayerSeason.images?.headshot,
       },
       playerSeason: {
         startDate: new Date(gatewatPlayerSeason.startDate),

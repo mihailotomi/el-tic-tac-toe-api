@@ -6,6 +6,6 @@ export class SearchPlayerDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  @Transform(({ value }: {value:string}) => value.replace(/[^a-z]/g, ""))
+  @Transform(({ value }: { value: string }) => value.toLowerCase().replace(/[^a-z ]/g, ""))
   search: string;
 }

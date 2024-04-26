@@ -25,19 +25,13 @@ export class PlayerService {
     return players.map(this.playerMapper.toDto);
   };
 
-  populatePlayers = async () => {
-    const years = Array.from({ length: 24 }, (_, i) => i + 2000);
+  populatePlayersForSeason = async (season: number) => {
+    const {
+      data: { data: playerSeasonListRaw },
+    } = await this.euroleagueGateway.getPlayersForSeason(season);
 
-    return Promise.all(
-      years.map(async (year) => {
-        const {
-          data: { data: playerSeasonListRaw },
-        } = await this.euroleagueGateway.getPlayersForSeason(year);
+    const playerSeasonPayloads = playerSeasonListRaw.map(this.playerMapper.apiToCreateDto);
 
-        const playerSeasonPayloads = playerSeasonListRaw.map(this.playerMapper.apiToCreateDto);
-
-        return this.playerRepository.insertSeasonPlayers(playerSeasonPayloads);
-      }),
-    );
+    return this.playerRepository.insertSeasonPlayers(playerSeasonPayloads);
   };
 }
