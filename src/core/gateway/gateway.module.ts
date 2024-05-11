@@ -1,36 +1,29 @@
 import { Module } from "@nestjs/common";
 import { HttpModule, HttpService } from "@nestjs/axios";
-import { ConfigModule, ConfigService } from "@nestjs/config";
 import { EUROCUP_GATEWAY, EUROLEAGUE_GATEWAY } from "./constants/injection-token";
-import { CompetitionApiGatewayProvider } from "./providers/competition-api-gateway.provider";
+import { EuroleagueApiGatewayProvider } from "./providers/euroleague-api-gateway.provider";
+import { ConfigService } from "@nestjs/config";
+import { ProballersGatewayProvider } from "./providers/proballers-gateway.provider";
 
 @Module({
-  imports: [
-    HttpModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        baseURL: ((configService.get("EUROLEAGUE_API_URL") as string) +
-          configService.get("EUROLEAGUE_API_VERSION")) as string,
-      }),
-    }),
-  ],
+  imports: [HttpModule],
   providers: [
     {
       provide: EUROLEAGUE_GATEWAY,
-      useFactory: (httpService: HttpService) => {
-        return new CompetitionApiGatewayProvider(httpService, "E");
+      useFactory: (httpService: HttpService, configService: ConfigService) => {
+        return new EuroleagueApiGatewayProvider(httpService, "E", configService);
       },
       inject: [HttpService],
     },
     {
       provide: EUROCUP_GATEWAY,
-      useFactory: (httpService: HttpService) => {
-        return new CompetitionApiGatewayProvider(httpService, "U");
+      useFactory: (httpService: HttpService, configService: ConfigService) => {
+        return new EuroleagueApiGatewayProvider(httpService, "U", configService);
       },
       inject: [HttpService],
     },
+    ProballersGatewayProvider,
   ],
-  exports: [EUROLEAGUE_GATEWAY, EUROCUP_GATEWAY],
+  exports: [EUROLEAGUE_GATEWAY, EUROCUP_GATEWAY, ProballersGatewayProvider],
 })
 export class GatewayModule {}

@@ -2,14 +2,14 @@ import { Inject, Injectable } from "@nestjs/common";
 import { ClubRepository } from "../repository/club.repository";
 import { ClubMapperService } from "./club-mapper.service";
 import { EUROLEAGUE_GATEWAY } from "../../core/gateway/constants/injection-token";
-import { CompetitionApiGatewayProvider } from "../../core/gateway/providers/competition-api-gateway.provider";
+import { EuroleagueApiGatewayProvider } from "../../core/gateway/providers/euroleague-api-gateway.provider";
 import { GridDifficulty } from "../../grid/enums/grid-difficulty";
 import { Club } from "../models/club";
 
 @Injectable()
 export class ClubService {
   constructor(
-    @Inject(EUROLEAGUE_GATEWAY) private euroleagueGateway: CompetitionApiGatewayProvider,
+    @Inject(EUROLEAGUE_GATEWAY) private euroleagueGateway: EuroleagueApiGatewayProvider,
     private clubRepository: ClubRepository,
     private clubMapper: ClubMapperService,
   ) {}

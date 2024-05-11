@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { EUROLEAGUE_GATEWAY } from "src/core/gateway/constants/injection-token";
-import { CompetitionApiGatewayProvider } from "src/core/gateway/providers/competition-api-gateway.provider";
+import { EuroleagueApiGatewayProvider } from "src/core/gateway/providers/euroleague-api-gateway.provider";
 import { PlayerRepository } from "../repository/player.repository";
 import { PlayerMapperService } from "./player-mapper.service";
 import { SearchPlayerDto } from "../dto/search-player.dto";
@@ -10,7 +10,7 @@ import { PlayerDto } from "../dto/player.dto";
 @Injectable()
 export class PlayerService {
   constructor(
-    @Inject(EUROLEAGUE_GATEWAY) private euroleagueGateway: CompetitionApiGatewayProvider,
+    @Inject(EUROLEAGUE_GATEWAY) private euroleagueGateway: EuroleagueApiGatewayProvider,
     private playerRepository: PlayerRepository,
     private playerMapper: PlayerMapperService,
   ) {}

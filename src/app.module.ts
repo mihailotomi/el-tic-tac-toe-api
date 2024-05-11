@@ -14,7 +14,7 @@ import { EuroleagueApiSeedCommand } from "./cli/commands/euroleague-api-seed.com
   imports: [
     PlayerModule,
     ClubModule,
-    ConfigModule.forRoot({ isGlobal: true, envFilePath: ".development.env" }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: ".env.local" }),
     DatabaseModule,
     InfrastructureModule,
     GridModule,

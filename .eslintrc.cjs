@@ -58,7 +58,6 @@ module.exports = {
     "no-nested-ternary": "off",
     "prefer-default-export": "off",
     "no-use-before-define": "off",
-    "no-plusplus": "off",
     "arrow-body-style": "off",
     "security/detect-object-injection": "off",
     "no-plusplus": "off",
@@ -70,5 +69,7 @@ module.exports = {
     "class-methods-use-this": "off",
     "no-empty-function": "off",
     "@typescript-eslint/no-unnecessary-type-assertion": "off",
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": ["error"],
   },
 };
