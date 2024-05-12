@@ -45,7 +45,7 @@ export const playerSeasons = pgTable(
     id: serial("id").primaryKey(),
     clubId: integer("club_id").references(() => clubs.id),
     playerId: integer("player_id").references(() => players.id),
-    seasonName: varchar("season_name", { length: 6 }).notNull(),
+    season: integer("season_name").notNull(),
     startDate: timestamp("start_date").notNull(),
     endDate: timestamp("end_date").notNull(),
     createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
@@ -54,6 +54,6 @@ export const playerSeasons = pgTable(
       .$onUpdate(() => new Date()),
   },
   (t) => ({
-    unqPlayerSeason: unique().on(t.clubId, t.playerId, t.seasonName),
+    unqPlayerSeason: unique().on(t.clubId, t.playerId, t.season),
   }),
 );

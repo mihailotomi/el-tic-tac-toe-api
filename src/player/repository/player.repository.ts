@@ -72,11 +72,18 @@ export class PlayerRepository {
             .where(eq(clubs.code, playerSeason.playerSeason?.clubCode));
 
           const { startDate, endDate, seasonName } = playerSeason.playerSeason;
+          const season = parseInt(seasonName.substring(1));
 
           if (playerData?.length && clubData?.length) {
             await tx
               .insert(playerSeasons)
-              .values({ startDate, endDate, seasonName, playerId: playerData[0].id, clubId: clubData[0].id })
+              .values({
+                startDate,
+                endDate,
+                season, 
+                playerId: playerData[0].id,
+                clubId: clubData[0].id,
+              })
               .onConflictDoNothing();
           }
         }),
