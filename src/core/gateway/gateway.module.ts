@@ -4,6 +4,7 @@ import { EUROCUP_GATEWAY, EUROLEAGUE_GATEWAY } from "./constants/injection-token
 import { EuroleagueApiGatewayProvider } from "./providers/euroleague-api-gateway.provider";
 import { ConfigService } from "@nestjs/config";
 import { ProballersGatewayProvider } from "./providers/proballers-gateway.provider";
+import { ProballersMapperService } from "./mappers/proballers-mapper.service";
 
 @Module({
   imports: [HttpModule],
@@ -13,16 +14,17 @@ import { ProballersGatewayProvider } from "./providers/proballers-gateway.provid
       useFactory: (httpService: HttpService, configService: ConfigService) => {
         return new EuroleagueApiGatewayProvider(httpService, "E", configService);
       },
-      inject: [HttpService],
+      inject: [HttpService, ConfigService],
     },
     {
       provide: EUROCUP_GATEWAY,
       useFactory: (httpService: HttpService, configService: ConfigService) => {
         return new EuroleagueApiGatewayProvider(httpService, "U", configService);
       },
-      inject: [HttpService],
+      inject: [HttpService, ConfigService],
     },
     ProballersGatewayProvider,
+    ProballersMapperService,
   ],
   exports: [EUROLEAGUE_GATEWAY, EUROCUP_GATEWAY, ProballersGatewayProvider],
 })

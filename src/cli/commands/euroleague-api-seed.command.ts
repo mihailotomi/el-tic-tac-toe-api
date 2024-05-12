@@ -4,7 +4,6 @@ import { PlayerService } from "src/player/services/player.service";
 
 @SubCommand({
   name: "el-api",
-  options: { isDefault: true },
 })
 export class EuroleagueApiSeedCommand extends CommandRunner {
   constructor(

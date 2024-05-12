@@ -9,6 +9,8 @@ import { InfrastructureModule } from "./core/infrastructure/infrastructure.modul
 import { GridModule } from "./grid/grid.module";
 import { SeedPlayersCommand } from "./cli/commands/seed-players.command";
 import { EuroleagueApiSeedCommand } from "./cli/commands/euroleague-api-seed.command";
+import { ProballersSeedCommand } from "./cli/commands/proballers-seed.command";
+import { GatewayModule } from "./core/gateway/gateway.module";
 
 @Module({
   imports: [
@@ -18,8 +20,9 @@ import { EuroleagueApiSeedCommand } from "./cli/commands/euroleague-api-seed.com
     DatabaseModule,
     InfrastructureModule,
     GridModule,
+    GatewayModule,
   ],
   controllers: [],
-  providers: [ConsoleLogger, SeedPlayersCommand, EuroleagueApiSeedCommand],
+  providers: [ConsoleLogger, SeedPlayersCommand, EuroleagueApiSeedCommand, ProballersSeedCommand],
 })
 export class AppModule {}

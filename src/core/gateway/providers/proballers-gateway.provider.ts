@@ -2,7 +2,7 @@ import { HttpService } from "@nestjs/axios";
 import { HttpException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { firstValueFrom } from "rxjs";
-import { ProballersPlayerSeasonDto } from "../dto/proballers-player-season.dto";
+import { ProballersMapperService } from "../mappers/proballers-mapper.service";
 
 @Injectable()
 export class ProballersGatewayProvider {
@@ -10,6 +10,7 @@ export class ProballersGatewayProvider {
 
   constructor(
     private httpService: HttpService,
+    private mapper: ProballersMapperService,
     configService: ConfigService,
   ) {
     this.baseUrl = configService.get("PROBALLERS_URL");
@@ -17,13 +18,14 @@ export class ProballersGatewayProvider {
 
   //   searchClubsByName;
 
-  getClubHistoricRoster(pbId: number, clubFullName: string) {
+  async getClubHistoricRoster(pbId: number, clubFullName: string) {
     try {
-      return firstValueFrom(
-        this.httpService.get<any>(
-          this.baseUrl + `/team/${pbId}/${clubFullName}/all-time-roster`,
-        ),
+      const response = await firstValueFrom(
+        this.httpService.get<any>(`${this.baseUrl}team/${pbId}/${clubFullName}/all-time-roster`, {
+          headers: { Accept: "text/html" },
+        }),
       );
+      return this.mapper.playersRawToIntermediate(response.data)
     } catch (error) {
       // TODO: throw custom exception
       throw new HttpException(error?.message || "", 400);
