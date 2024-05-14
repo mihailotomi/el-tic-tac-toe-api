@@ -15,9 +15,12 @@ export class ProballersSeedCommand extends CommandRunner {
   }
 
   async run(_inputs: string[], options: { season: number }): Promise<void> {
-    this.logger.log(`[Proballers] - Seeding players`);
-    const scrapedContent = await this.proballersGateway.getClubHistoricRoster(565, "partizan-belgrade");
-    // this.logger.log(`[Euroleague API] - Successfully seeded players for season: ${options.season}`);
-    await fs.promises.writeFile("player_table.json", JSON.stringify(scrapedContent));
+    this.logger.log(`[Proballers] - Seeding players for club`);
+    const playersIntermediateDtoList = await this.proballersGateway.getClubHistoricRoster(565, "partizan-belgrade");
+    const playerDtoList = await Promise.all(playersIntermediateDtoList.map(this.proballersGateway.getPlayerSeasonDetails))
+    await fs.promises.writeFile("player_table.json", JSON.stringify(playerDtoList));
+    this.logger.log(`[Proballers] - Finised seeding players for club`);
+    
+    return
   }
 }

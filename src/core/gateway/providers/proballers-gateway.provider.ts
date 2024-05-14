@@ -12,15 +12,15 @@ export class ProballersGatewayProvider {
   constructor(
     private httpService: HttpService,
     private mapper: ProballersMapperService,
-    configService: ConfigService,
+    private configService: ConfigService,
   ) {
     this.baseUrl = configService.get("PROBALLERS_URL");
   }
 
-  async getClubHistoricRoster(pbId: number, clubFullName: string): Promise<ProballersPlayerIntermediateDto[]> {
+  getClubHistoricRoster = async (pbId: number, clubFullName: string): Promise<ProballersPlayerIntermediateDto[]> => {
     try {
       const response = await firstValueFrom(
-        this.httpService.get<any>(`${this.baseUrl}/basketball/team/${pbId}/${clubFullName}/all-time-roster`, {
+        this.httpService.get<string>(`${this.baseUrl}/basketball/team/${pbId}/${clubFullName}/all-time-roster`, {
           headers: { Accept: "text/html" },
         }),
       );
@@ -29,19 +29,22 @@ export class ProballersGatewayProvider {
       // TODO: throw custom exception
       throw new HttpException(error?.message || "", 400);
     }
-  }
+  };
 
-  async getPlayerSeasonDetails({playerUrl}: ProballersPlayerIntermediateDto) {
+  getPlayerSeasonDetails = async ({ playerUrl, season }: ProballersPlayerIntermediateDto) => {
     try {
+      const seasonUri = season === +this.configService.get("CURRENT_SEASON") ? "games" : `games/${season}`;
       const response = await firstValueFrom(
-        this.httpService.get<any>(`${this.baseUrl}player/${playerUrl}`, {
+        this.httpService.get<string>(`${this.baseUrl}${playerUrl}/${seasonUri}`, {
           headers: { Accept: "text/html" },
         }),
       );
-      return response.data;
+      return this.mapper.playerDataToCreateDto(response.data, season);
     } catch (error) {
       // TODO: throw custom exception
-      throw new HttpException(error?.message || "", 400);
+      console.log(error);
+      
+      // throw new HttpException(error?.message || "", 400);
     }
-  }
+  };
 }
