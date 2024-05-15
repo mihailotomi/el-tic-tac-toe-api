@@ -8,7 +8,7 @@ export const players = pgTable(
     firstName: text("first_name"),
     lastName: text("last_name"),
     birthDate: timestamp("birth_date").notNull(),
-    country: char("country", { length: 3 }).notNull(),
+    country: char("country", { length: 3 }),
     imageUrl: text("image_url"),
     createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
     updatedAt: timestamp("updated_at")

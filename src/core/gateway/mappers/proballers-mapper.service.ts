@@ -6,6 +6,11 @@ import { CreatePlayerSeasonDto } from "src/player/dto/create-player-season.dto";
 
 @Injectable()
 export class ProballersMapperService {
+  /**
+   * Parse club players list into list of seasons paired with player page urls
+   * @param {string} html - HTML page containing list of club players
+   * @returns {ProballersPlayerIntermediateDto[]} - array of intermediate dtos for parsing
+   */
   playerListRawToIntermediateDto = (html: string): ProballersPlayerIntermediateDto[] => {
     const $ = cheerio.load(html);
     const playerListEl = $("html body").find("div.home-team__content table tbody");
@@ -34,6 +39,13 @@ export class ProballersMapperService {
     return intermediateDtoList;
   };
 
+  /**
+   * Parse player games page into player season
+   * @param {string} html - HTML page containing player data with all season games
+   * @param {number} season
+
+   * @returns {ProballersPlayerIntermediateDto[]} - entrypoint dto for storing player season
+   */
   playerDataToCreateDto = (html: string, season: number): any => {
     const $ = cheerio.load(html);
     // Player name
@@ -48,7 +60,7 @@ export class ProballersMapperService {
           names.push(text);
         }
       }
-    });
+    }); 
 
     // Image URL
     const imageUrl = $("html body").find(".identity__picture--player img").attr("src");
@@ -75,6 +87,11 @@ export class ProballersMapperService {
     };
   };
 
+  /**
+   * get season number for storing from season string (eg. 2022/2023)
+   * @param {string} seasonString - season string with start and end year 
+   * @returns {number | null} - nullable season number
+   */
   private getSeasonStartYear = (seasonString: string): number | null => {
     const parts = seasonString.split("-");
 
@@ -89,7 +106,12 @@ export class ProballersMapperService {
     return null;
   };
 
-  private parseBirthdate(birthDateAndAgeString: string) {
+  /**
+   * parse player birthdate from age string (eg. APR 22, 1991 (33 YEARS OLD))
+   * @param {string} birthDateAndAgeString - string containing the birth date and the age
+   * @returns {Date} - birth date
+   */
+  private parseBirthdate(birthDateAndAgeString: string): Date {
     const birthdateString =
       birthDateAndAgeString.split(" ")[0] +
       " " +
