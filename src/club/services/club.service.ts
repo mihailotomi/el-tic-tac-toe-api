@@ -49,14 +49,11 @@ export class ClubService {
   populateClubs = async () => {
     for (let year = 2023; year >= 2000; year--) {
       // NOTE: we don't want to run this in parallel, because we want the latest club names and crests
-      const {
-        data: { data: seasonClubsRaw },
-        // eslint-disable-next-line no-await-in-loop
-      } = await this.euroleagueGateway.getClubsForSeason(year);
-
-      const clubPayloads = seasonClubsRaw.map(this.clubMapper.gatewayToCreateDto);
       // eslint-disable-next-line no-await-in-loop
-      await this.clubRepository.insertClubs(clubPayloads);
+      const seasonClubDtoList = await this.euroleagueGateway.getClubsForSeason(year);
+
+      // eslint-disable-next-line no-await-in-loop
+      await this.clubRepository.insertClubs(seasonClubDtoList);
     }
   };
 }

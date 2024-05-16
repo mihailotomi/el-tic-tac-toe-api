@@ -12,21 +12,4 @@ export class PlayerMapperService {
 
     return playerDto;
   };
-
-  apiToCreateDto = (gatewatPlayerSeason: GatewayPlayerSeasonDto): CreatePlayerSeasonDto => {
-    return {
-      player: {
-        name: gatewatPlayerSeason.person?.name,
-        country: gatewatPlayerSeason.person?.country?.code,
-        birthDate: new Date(gatewatPlayerSeason.person.birthDate),
-        imageUrl: gatewatPlayerSeason?.images && gatewatPlayerSeason.images?.headshot,
-      },
-      playerSeason: {
-        startDate: new Date(gatewatPlayerSeason.startDate),
-        endDate: new Date(gatewatPlayerSeason.endDate),
-        clubCode: gatewatPlayerSeason.club.code,
-        seasonName: gatewatPlayerSeason.season.code,
-      },
-    };
-  };
 }

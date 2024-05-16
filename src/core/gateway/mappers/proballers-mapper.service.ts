@@ -60,14 +60,14 @@ export class ProballersMapperService {
           names.push(text);
         }
       }
-    }); 
+    });
 
     // Image URL
     const imageUrl = $("html body").find(".identity__picture--player img").attr("src");
 
     // Birth date
-    const birthDateAndAgeString = $("html body").find(".identity__profil").children().first().text();
-    const birthDate = this.parseBirthdate(birthDateAndAgeString);
+    const birthDateAndAgeEl = $("html body").find(".identity__profil").children().first();
+    const birthDate = this.parseBirthdate(birthDateAndAgeEl.text());
 
     // Season start and end date
     const gamesTable = $("html body").find(".table__inner .table tbody");
@@ -75,6 +75,9 @@ export class ProballersMapperService {
     const endDateString = gamesTable.children().last().find(".left.switch.hidden").children().first().text();
     const startDate = startDateString ? new Date(startDateString) : null;
     const endDate = endDateString ? new Date(endDateString) : null;
+
+    birthDateAndAgeEl.remove();
+    const nationality = $("html body").find(".identity__profil").children().first().text();
 
     return {
       firstName: names[0],
@@ -84,12 +87,13 @@ export class ProballersMapperService {
       birthDate,
       startDate,
       endDate,
+      nationality
     };
   };
 
   /**
    * get season number for storing from season string (eg. 2022/2023)
-   * @param {string} seasonString - season string with start and end year 
+   * @param {string} seasonString - season string with start and end year
    * @returns {number | null} - nullable season number
    */
   private getSeasonStartYear = (seasonString: string): number | null => {

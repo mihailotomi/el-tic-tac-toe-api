@@ -12,12 +12,4 @@ export class ClubMapperService {
 
     return clubDto;
   };
-
-  gatewayToCreateDto = (gatewayClub: GatewayClubDto): CreateClubDto => {
-    return {
-      name: gatewayClub.name,
-      code: gatewayClub.code,
-      crestUrl: gatewayClub?.images?.crest,
-    };
-  };
 }
