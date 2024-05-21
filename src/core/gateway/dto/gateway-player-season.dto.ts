@@ -21,6 +21,6 @@ export class GatewayPlayerSeasonDto {
   };
 
   season: {
-    code: string;
+    year: number;
   };
 }

@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { GatewayClubDto } from "../dto/gateway-club.dto";
 import { CreateClubDto } from "src/club/dto/create-club.dto";
-import { GatewayPlayerSeasonDto } from "../dto/gateway-player-season.dto";
 import { CreatePlayerSeasonDto } from "src/player/dto/create-player-season.dto";
+import { GatewayClubDto } from "../dto/gateway-club.dto";
+import { GatewayPlayerSeasonDto } from "../dto/gateway-player-season.dto";
 
 @Injectable()
 export class EuroleagueApiMapperService {
@@ -25,9 +25,12 @@ export class EuroleagueApiMapperService {
    * @returns {CreatePlayerSeasonDto}
    */
   playerDataToCreateDto = (gatewatPlayerSeason: GatewayPlayerSeasonDto): CreatePlayerSeasonDto => {
+    const [lastName, firstName] = gatewatPlayerSeason.person.name.split(", ");
+
     return {
       player: {
-        name: gatewatPlayerSeason.person?.name,
+        firstName,
+        lastName,
         country: gatewatPlayerSeason.person?.country?.code,
         birthDate: new Date(gatewatPlayerSeason.person.birthDate),
         imageUrl: gatewatPlayerSeason?.images && gatewatPlayerSeason.images?.headshot,
@@ -36,7 +39,7 @@ export class EuroleagueApiMapperService {
         startDate: new Date(gatewatPlayerSeason.startDate),
         endDate: new Date(gatewatPlayerSeason.endDate),
         clubCode: gatewatPlayerSeason.club.code,
-        seasonName: gatewatPlayerSeason.season.code,
+        season: gatewatPlayerSeason.season.year,
       },
     };
   };

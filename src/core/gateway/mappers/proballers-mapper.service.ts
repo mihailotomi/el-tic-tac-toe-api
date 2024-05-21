@@ -1,11 +1,13 @@
 import { Injectable } from "@nestjs/common";
-import { Player } from "src/player/models/player";
 import cheerio from "cheerio";
-import { ProballersPlayerIntermediateDto } from "../dto/proballers-player-intermediate.dto";
 import { CreatePlayerSeasonDto } from "src/player/dto/create-player-season.dto";
+import { ProballersPlayerIntermediateDto } from "../dto/proballers-player-intermediate.dto";
+import { NationalityMapperService } from "./nationality-mapper.service";
 
 @Injectable()
 export class ProballersMapperService {
+  constructor(private nationalityMapper: NationalityMapperService) {}
+
   /**
    * Parse club players list into list of seasons paired with player page urls
    * @param {string} html - HTML page containing list of club players
@@ -27,7 +29,7 @@ export class ProballersMapperService {
         .last()
         .first()
         .children()
-        .each((_index, seasonEl) => {
+        .each((_i, seasonEl) => {
           // create an intermediate player season dto for each season
           const season = this.getSeasonStartYear($(seasonEl).text());
           if (season) {
@@ -41,12 +43,11 @@ export class ProballersMapperService {
 
   /**
    * Parse player games page into player season
-   * @param {string} html - HTML page containing player data with all season games
-   * @param {number} season
-
-   * @returns {ProballersPlayerIntermediateDto[]} - entrypoint dto for storing player season
+   * @param {string} html - HTML page containing player data with all of his seasons
+   * @param {number} _season
+   * @returns {CreatePlayerSeasonDto[]} - entrypoint dto list for storing player seasons
    */
-  playerDataToCreateDto = (html: string, season: number): any => {
+  playerDataToCreateDto = (html: string, _season: number): CreatePlayerSeasonDto[] => {
     const $ = cheerio.load(html);
     // Player name
     const playerNameContainer = $("html body").find(".identity__name");
@@ -69,26 +70,34 @@ export class ProballersMapperService {
     const birthDateAndAgeEl = $("html body").find(".identity__profil").children().first();
     const birthDate = this.parseBirthdate(birthDateAndAgeEl.text());
 
-    // Season start and end date
-    const gamesTable = $("html body").find(".table__inner .table tbody");
-    const startDateString = gamesTable.children().first().find(".left.switch.hidden").children().first().text();
-    const endDateString = gamesTable.children().last().find(".left.switch.hidden").children().first().text();
-    const startDate = startDateString ? new Date(startDateString) : null;
-    const endDate = endDateString ? new Date(endDateString) : null;
-
+    // Country
     birthDateAndAgeEl.remove();
     const nationality = $("html body").find(".identity__profil").children().first().text();
+    const country = this.nationalityMapper.nationalityToCountryISO(nationality);
 
-    return {
-      firstName: names[0],
-      lastName: names[1],
-      season,
-      imageUrl: imageUrl.includes("head-par-defaut") ? null : imageUrl,
-      birthDate,
-      startDate,
-      endDate,
-      nationality
-    };
+    // // Season start and end date
+    // const gamesTable = $("html body").find(".table__inner .table tbody");
+    // const startDateString = gamesTable.children().first().find(".left.switch.hidden").children().first().text();
+    // const endDateString = gamesTable.children().last().find(".left.switch.hidden").children().first().text();
+    // const startDate = startDateString ? new Date(startDateString) : null;
+    // const endDate = endDateString ? new Date(endDateString) : null;
+
+
+    return [{
+      player: {
+        firstName: names[0],
+        lastName: names[1],
+        imageUrl: imageUrl.includes("head-par-defaut") ? null : imageUrl,
+        birthDate,
+        country,
+      },
+      playerSeason: {
+        season: 2023,
+        startDate: new Date(),
+        endDate: new Date(),
+        clubCode: "PAR"
+      },
+    }];
   };
 
   /**
@@ -102,7 +111,7 @@ export class ProballersMapperService {
     if (parts.length === 2) {
       const startYear = parseInt(parts[0], 10);
 
-      if (!isNaN(startYear)) {
+      if (!Number.isNaN(startYear)) {
         return startYear;
       }
     }
@@ -117,11 +126,11 @@ export class ProballersMapperService {
    */
   private parseBirthdate(birthDateAndAgeString: string): Date {
     const birthdateString =
-      birthDateAndAgeString.split(" ")[0] +
-      " " +
-      birthDateAndAgeString.split(" ")[1] +
-      ", " +
-      birthDateAndAgeString.split(" ")[2];
+      `${birthDateAndAgeString.split(" ")[0] 
+      } ${ 
+      birthDateAndAgeString.split(" ")[1] 
+      }, ${ 
+      birthDateAndAgeString.split(" ")[2]}`;
 
     return new Date(birthdateString);
   }

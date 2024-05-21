@@ -33,9 +33,8 @@ export class ProballersGatewayProvider {
 
   getPlayerSeasonDetails = async ({ playerUrl, season }: ProballersPlayerIntermediateDto) => {
     try {
-      const seasonUri = season === +this.configService.get("CURRENT_SEASON") ? "games" : `games/${season}`;
       const response = await firstValueFrom(
-        this.httpService.get<string>(`${this.baseUrl}${playerUrl}/${seasonUri}`, {
+        this.httpService.get<string>(`${this.baseUrl}${playerUrl}`, {
           headers: { Accept: "text/html" },
         }),
       );
@@ -43,7 +42,7 @@ export class ProballersGatewayProvider {
     } catch (error) {
       // TODO: throw custom exception
       console.log(error);
-      
+
       // throw new HttpException(error?.message || "", 400);
     }
   };

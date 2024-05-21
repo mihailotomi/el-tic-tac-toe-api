@@ -1,5 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { EUROLEAGUE_GATEWAY } from "src/core/gateway/constants/injection-token";
+import { Injectable } from "@nestjs/common";
 import { EuroleagueApiGatewayProvider } from "src/core/gateway/providers/euroleague-api-gateway.provider";
 import { PlayerRepository } from "../repository/player.repository";
 import { PlayerMapperService } from "./player-mapper.service";
@@ -10,7 +9,7 @@ import { PlayerDto } from "../dto/player.dto";
 @Injectable()
 export class PlayerService {
   constructor(
-    @Inject(EUROLEAGUE_GATEWAY) private euroleagueGateway: EuroleagueApiGatewayProvider,
+    private euroleagueGateway: EuroleagueApiGatewayProvider,
     private playerRepository: PlayerRepository,
     private playerMapper: PlayerMapperService,
   ) {}
@@ -26,11 +25,7 @@ export class PlayerService {
   };
 
   populatePlayersForSeason = async (season: number) => {
-    const {
-      data: { data: playerSeasonListRaw },
-    } = await this.euroleagueGateway.getPlayersForSeason(season);
-
-    const playerSeasonPayloads = playerSeasonListRaw.map(this.playerMapper.apiToCreateDto);
+    const playerSeasonPayloads = await this.euroleagueGateway.getPlayersForSeason(season);
 
     return this.playerRepository.insertSeasonPlayers(playerSeasonPayloads);
   };

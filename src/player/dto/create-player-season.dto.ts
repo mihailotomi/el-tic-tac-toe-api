@@ -1,13 +1,14 @@
 export class CreatePlayerSeasonDto {
   player: {
-    name: string;
+    firstName: string;
+    lastName: string;
     birthDate: Date;
     country: string;
     imageUrl?: string;
   };
 
   playerSeason: {
-    seasonName: string;
+    season: number;
     startDate: Date;
     endDate: Date;
     clubCode: string;

@@ -1,7 +1,5 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { ClubRepository } from "../repository/club.repository";
-import { ClubMapperService } from "./club-mapper.service";
-import { EUROLEAGUE_GATEWAY } from "../../core/gateway/constants/injection-token";
 import { EuroleagueApiGatewayProvider } from "../../core/gateway/providers/euroleague-api-gateway.provider";
 import { GridDifficulty } from "../../grid/enums/grid-difficulty";
 import { Club } from "../models/club";
@@ -9,9 +7,8 @@ import { Club } from "../models/club";
 @Injectable()
 export class ClubService {
   constructor(
-    @Inject(EUROLEAGUE_GATEWAY) private euroleagueGateway: EuroleagueApiGatewayProvider,
+    private euroleagueGateway: EuroleagueApiGatewayProvider,
     private clubRepository: ClubRepository,
-    private clubMapper: ClubMapperService,
   ) {}
 
   private clubDifficultyLimit = (difficulty: GridDifficulty): number => {

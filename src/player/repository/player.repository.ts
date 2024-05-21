@@ -40,16 +40,6 @@ export class PlayerRepository {
         .values(
           playerSeasonPayload
             .map((ps) => ps.player)
-            .map((p) => {
-              const [lastName, firstName] = p.name.split(", ");
-              const { name: _name, ...newPlayer } = p;
-
-              return {
-                ...newPlayer,
-                firstName,
-                lastName,
-              };
-            })
             .filter((p) => p?.country && p?.birthDate && p?.firstName && p?.lastName),
         )
         .onConflictDoNothing();
@@ -61,7 +51,8 @@ export class PlayerRepository {
             .from(players)
             .where(
               and(
-                eq(sql`CONCAT(${players.lastName}, ', ', ${players.firstName})`, playerSeason.player?.name),
+                eq(players.firstName, playerSeason.player?.firstName),
+                eq(players.lastName, playerSeason.player?.lastName),
                 eq(players.birthDate, playerSeason.player?.birthDate),
               ),
             );
@@ -71,8 +62,7 @@ export class PlayerRepository {
             .from(clubs)
             .where(eq(clubs.code, playerSeason.playerSeason?.clubCode));
 
-          const { startDate, endDate, seasonName } = playerSeason.playerSeason;
-          const season = parseInt(seasonName.substring(1));
+          const { startDate, endDate, season } = playerSeason.playerSeason;
 
           if (playerData?.length && clubData?.length) {
             await tx
@@ -80,7 +70,7 @@ export class PlayerRepository {
               .values({
                 startDate,
                 endDate,
-                season, 
+                season,
                 playerId: playerData[0].id,
                 clubId: clubData[0].id,
               })

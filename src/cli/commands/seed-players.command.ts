@@ -8,6 +8,8 @@ import { ProballersSeedCommand } from "./proballers-seed.command";
   subCommands: [EuroleagueApiSeedCommand, ProballersSeedCommand],
 })
 export class SeedPlayersCommand extends CommandRunner {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async run(_inputs: string[], _options: Record<string, any>): Promise<void> {
     console.log("Choose source");
   }
