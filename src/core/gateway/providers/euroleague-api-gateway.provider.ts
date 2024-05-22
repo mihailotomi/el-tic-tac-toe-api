@@ -22,6 +22,11 @@ export class EuroleagueApiGatewayProvider {
     this.baseUrl = configService.get("EUROLEAGUE_API_URL");
   }
 
+  /**
+   * Sends a request to euroleague api to fatch all clubs for a given season
+   * @param {number} season
+   * @returns {Promise<CreateClubDto[]>} - club persistance entrypoint dto list
+   */
   async getClubsForSeason(season: number): Promise<CreateClubDto[]> {
     try {
       const response = await firstValueFrom(
@@ -37,6 +42,11 @@ export class EuroleagueApiGatewayProvider {
     }
   }
 
+  /**
+   * Sends a request to euroleague api to fatch all players for a given season
+   * @param {number} season
+   * @returns {Promise<CreateClubDto[]>} - player persistance entrypoint dto list
+   */
   async getPlayersForSeason(season: number): Promise<CreatePlayerSeasonDto[]> {
     try {
       const response = await firstValueFrom(

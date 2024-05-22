@@ -23,6 +23,7 @@ export class ProballersMapperService {
       // URL of the player data
       const playerUrl = $(playerRow).find(".list-player-entry").attr("href").trim();
 
+      const seasonList: number[] = [];
       // Last column in players table is the link to player profile
       $(playerRow)
         .children()
@@ -30,24 +31,25 @@ export class ProballersMapperService {
         .first()
         .children()
         .each((_i, seasonEl) => {
-          // create an intermediate player season dto for each season
           const season = this.getSeasonStartYear($(seasonEl).text());
           if (season) {
-            intermediateDtoList.push({ season, playerUrl });
+            seasonList.push(season);
           }
         });
+
+      intermediateDtoList.push({ seasons: seasonList, playerUrl });
     });
 
     return intermediateDtoList;
   };
 
   /**
-   * Parse player games page into player season
+   * Parse player profile page into player seasons
    * @param {string} html - HTML page containing player data with all of his seasons
-   * @param {number} _season
+   * @param {number[]} seasons
    * @returns {CreatePlayerSeasonDto[]} - entrypoint dto list for storing player seasons
    */
-  playerDataToCreateDto = (html: string, _season: number): CreatePlayerSeasonDto[] => {
+  playerDataToCreateDto = (html: string, seasons: number[]): CreatePlayerSeasonDto[] => {
     const $ = cheerio.load(html);
     // Player name
     const playerNameContainer = $("html body").find(".identity__name");
@@ -75,15 +77,7 @@ export class ProballersMapperService {
     const nationality = $("html body").find(".identity__profil").children().first().text();
     const country = this.nationalityMapper.nationalityToCountryISO(nationality);
 
-    // // Season start and end date
-    // const gamesTable = $("html body").find(".table__inner .table tbody");
-    // const startDateString = gamesTable.children().first().find(".left.switch.hidden").children().first().text();
-    // const endDateString = gamesTable.children().last().find(".left.switch.hidden").children().first().text();
-    // const startDate = startDateString ? new Date(startDateString) : null;
-    // const endDate = endDateString ? new Date(endDateString) : null;
-
-
-    return [{
+    return seasons.map((season) => ({
       player: {
         firstName: names[0],
         lastName: names[1],
@@ -93,11 +87,11 @@ export class ProballersMapperService {
       },
       playerSeason: {
         season: 2023,
-        startDate: new Date(),
-        endDate: new Date(),
-        clubCode: "PAR"
+        startDate: this.assumeSeasonStart(season),
+        endDate: this.assumeSeasonEnd(season),
+        clubCode: "PAR",
       },
-    }];
+    }));
   };
 
   /**
@@ -125,13 +119,26 @@ export class ProballersMapperService {
    * @returns {Date} - birth date
    */
   private parseBirthdate(birthDateAndAgeString: string): Date {
-    const birthdateString =
-      `${birthDateAndAgeString.split(" ")[0] 
-      } ${ 
-      birthDateAndAgeString.split(" ")[1] 
-      }, ${ 
-      birthDateAndAgeString.split(" ")[2]}`;
+    const birthdateString = `${birthDateAndAgeString.split(" ")[0]} ${birthDateAndAgeString.split(" ")[1]}, ${
+      birthDateAndAgeString.split(" ")[2]
+    }`;
 
     return new Date(birthdateString);
+  }
+
+  /**
+   * Get the assumed start date for a season (Sep 30)
+   * @param season
+   */
+  private assumeSeasonStart(season: number): Date {
+    return new Date(`09/30/${season}`);
+  }
+
+  /**
+   * Get the assumed end date for a season (June 30)
+   * @param season
+   */
+  private assumeSeasonEnd(season: number): Date {
+    return new Date(`06/30/${season + 1}`);
   }
 }
