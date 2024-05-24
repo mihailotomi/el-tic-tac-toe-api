@@ -11,6 +11,11 @@ import { Player } from "../models/player";
 export class PlayerRepository {
   constructor(@Inject(DB_CONTEXT) private dbContext: DbType) {}
 
+  /**
+   * Text search for players
+   * @param {{ search: string; limit: number }} params
+   * @returns {Promise<Player[]>}
+   */
   nameSearchAutocomplete = async ({ search, limit }: { search: string; limit: number }): Promise<Player[]> => {
     return this.dbContext
       .select()
@@ -24,6 +29,11 @@ export class PlayerRepository {
       .limit(limit);
   };
 
+  /**
+   * Check if a certain player played for a certain club
+   * @param {CheckPlayerMatchDto} dto dto with club and player identifiers
+   * @returns {Promise<boolean>} validation result
+   */
   validatePlayerClubHistory = async ({ clubIds, playerId }: CheckPlayerMatchDto): Promise<boolean> => {
     const [result] = await this.dbContext
       .select({ played: eq(countDistinct(playerSeasons.clubId), clubIds.length) as SQL<boolean> })
@@ -34,6 +44,7 @@ export class PlayerRepository {
   };
 
   insertSeasonPlayers = async (playerSeasonPayload: CreatePlayerSeasonDto[]) => {
+    // Upsert players (add country and image if we don't already have it)
     return this.dbContext.transaction(async (tx) => {
       await tx
         .insert(players)
@@ -42,7 +53,15 @@ export class PlayerRepository {
             .map((ps) => ps.player)
             .filter((p) => p?.country && p?.birthDate && p?.firstName && p?.lastName),
         )
-        .onConflictDoNothing();
+        .onConflictDoUpdate({
+          target: [players.firstName, players.lastName, players.birthDate],
+          set: {
+            country: sql`COALESCE(players.country, EXCLUDED.country)`,
+            imageUrl: sql`COALESCE(players.image_url, EXCLUDED.image_url)`,
+            updatedAt: new Date(),
+          },
+          where: sql`players.country IS NULL OR players.image_url IS NULL`,
+        });
 
       await Promise.all(
         playerSeasonPayload.map(async (playerSeason) => {

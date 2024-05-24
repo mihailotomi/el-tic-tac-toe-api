@@ -11,9 +11,10 @@ export class ProballersMapperService {
   /**
    * Parse club players list into list of seasons paired with player page urls
    * @param {string} html - HTML page containing list of club players
+   * @param {string} clubCode - code of the club
    * @returns {ProballersPlayerIntermediateDto[]} - array of intermediate dtos for parsing
    */
-  playerListRawToIntermediateDto = (html: string): ProballersPlayerIntermediateDto[] => {
+  playerListRawToIntermediateDto = (html: string, clubCode: string): ProballersPlayerIntermediateDto[] => {
     const $ = cheerio.load(html);
     const playerListEl = $("html body").find("div.home-team__content table tbody");
 
@@ -37,7 +38,7 @@ export class ProballersMapperService {
           }
         });
 
-      intermediateDtoList.push({ seasons: seasonList, playerUrl });
+      intermediateDtoList.push({ seasons: seasonList, playerUrl, clubCode });
     });
 
     return intermediateDtoList;
@@ -47,9 +48,10 @@ export class ProballersMapperService {
    * Parse player profile page into player seasons
    * @param {string} html - HTML page containing player data with all of his seasons
    * @param {number[]} seasons
+   * @param {string} clubCode - code of the club
    * @returns {CreatePlayerSeasonDto[]} - entrypoint dto list for storing player seasons
    */
-  playerDataToCreateDto = (html: string, seasons: number[]): CreatePlayerSeasonDto[] => {
+  playerDataToCreateDto = (html: string, seasons: number[], clubCode: string): CreatePlayerSeasonDto[] => {
     const $ = cheerio.load(html);
     // Player name
     const playerNameContainer = $("html body").find(".identity__name");
@@ -89,7 +91,7 @@ export class ProballersMapperService {
         season: 2023,
         startDate: this.assumeSeasonStart(season),
         endDate: this.assumeSeasonEnd(season),
-        clubCode: "PAR",
+        clubCode,
       },
     }));
   };

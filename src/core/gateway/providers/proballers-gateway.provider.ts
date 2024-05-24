@@ -20,18 +20,18 @@ export class ProballersGatewayProvider {
 
   /**
    * Sends a request to proballers team historic roster and parses intermediate player dto
-   * @param {number} pbId - proballers id of the club
-   * @param {string} clubFullName - proballers full name of the club
+   * @param {number} clubUri - proballers URI of the club
+   * @param {string} clubCode - code of the club
    * @returns {Promise<ProballersPlayerIntermediateDto[]>}
    */
-  getClubHistoricRoster = async (pbId: number, clubFullName: string): Promise<ProballersPlayerIntermediateDto[]> => {
+  getClubHistoricRoster = async (clubUri: string, clubCode: string): Promise<ProballersPlayerIntermediateDto[]> => {
     try {
       const response = await firstValueFrom(
-        this.httpService.get<string>(`${this.baseUrl}/basketball/team/${pbId}/${clubFullName}/all-time-roster`, {
+        this.httpService.get<string>(`${this.baseUrl}/basketball/team/${clubUri}/all-time-roster`, {
           headers: { Accept: "text/html" },
         }),
       );
-      return this.mapper.playerListRawToIntermediateDto(response.data);
+      return this.mapper.playerListRawToIntermediateDto(response.data, clubCode);
     } catch (error) {
       // TODO: throw custom exception
       throw new HttpException(error?.message || "", 400);
@@ -40,14 +40,13 @@ export class ProballersGatewayProvider {
 
   /**
    * Sends a request to proballers team historic roster and parses intermediate player dto
-   * @param {Object} dto
-   * @param {string} dto.playerUrl - url for the player page
-   * @param {number[]} dto.seasons - list of seasons player spent at the club
+   * @param {ProballersPlayerIntermediateDto} dto
    * @returns {Promise<CreatePlayerSeasonDto[]>}
    */
   getPlayerSeasonDetails = async ({
     playerUrl,
     seasons,
+    clubCode,
   }: ProballersPlayerIntermediateDto): Promise<CreatePlayerSeasonDto[]> => {
     try {
       const response = await firstValueFrom(
@@ -55,7 +54,7 @@ export class ProballersGatewayProvider {
           headers: { Accept: "text/html" },
         }),
       );
-      return this.mapper.playerDataToCreateDto(response.data, seasons);
+      return this.mapper.playerDataToCreateDto(response.data, seasons, clubCode);
     } catch (error) {
       // TODO: throw custom exception
       console.log(error);
