@@ -29,9 +29,10 @@ export class EuroleagueApiGatewayProvider {
    */
   async getClubsForSeason(season: number): Promise<CreateClubDto[]> {
     try {
+      
       const response = await firstValueFrom(
         this.httpService.get<{ data: GatewayClubDto[]; total: number }>(
-          `${this.baseUrl  }/competitions/${this.competitionCode}/seasons/${this.competitionCode}${season}/clubs`,
+          `${this.baseUrl}/v2/competitions/${this.competitionCode}/seasons/${this.competitionCode}${season}/clubs`,
         ),
       );
 
@@ -51,8 +52,7 @@ export class EuroleagueApiGatewayProvider {
     try {
       const response = await firstValueFrom(
         this.httpService.get<{ data: GatewayPlayerSeasonDto[]; total: number }>(
-          `${this.baseUrl 
-            }/competitions/${this.competitionCode}/seasons/${this.competitionCode}${season}/people?personType=J`,
+          `${this.baseUrl}/competitions/${this.competitionCode}/seasons/${this.competitionCode}${season}/people?personType=J`,
         ),
       );
 

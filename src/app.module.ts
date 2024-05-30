@@ -11,6 +11,7 @@ import { SeedPlayersCommand } from "./cli/commands/seed-players.command";
 import { EuroleagueApiSeedCommand } from "./cli/commands/euroleague-api-seed.command";
 import { ProballersSeedCommand } from "./cli/commands/proballers-seed.command";
 import { GatewayModule } from "./core/gateway/gateway.module";
+import { SeedClubsCommand } from "./cli/commands/seed-clubs.command";
 
 @Module({
   imports: [
@@ -23,6 +24,6 @@ import { GatewayModule } from "./core/gateway/gateway.module";
     GatewayModule,
   ],
   controllers: [],
-  providers: [ConsoleLogger, SeedPlayersCommand, EuroleagueApiSeedCommand, ProballersSeedCommand],
+  providers: [ConsoleLogger, SeedPlayersCommand, EuroleagueApiSeedCommand, ProballersSeedCommand, SeedClubsCommand],
 })
 export class AppModule {}

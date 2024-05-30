@@ -3,6 +3,7 @@ import { ClubRepository } from "../repository/club.repository";
 import { EuroleagueApiGatewayProvider } from "../../core/gateway/providers/euroleague-api-gateway.provider";
 import { GridDifficulty } from "../../grid/enums/grid-difficulty";
 import { Club } from "../models/club";
+import { CreateClubDto } from "../dto/create-club.dto";
 
 @Injectable()
 export class ClubService {
@@ -43,14 +44,7 @@ export class ClubService {
     });
   };
 
-  populateClubs = async () => {
-    for (let year = 2023; year >= 2000; year--) {
-      // NOTE: we don't want to run this in parallel, because we want the latest club names and crests
-      // eslint-disable-next-line no-await-in-loop
-      const seasonClubDtoList = await this.euroleagueGateway.getClubsForSeason(year);
-
-      // eslint-disable-next-line no-await-in-loop
-      await this.clubRepository.insertClubs(seasonClubDtoList);
-    }
+  insertClubs = async (seasonClubDtoList: CreateClubDto[]) => {
+    return this.clubRepository.insertClubs(seasonClubDtoList);
   };
 }

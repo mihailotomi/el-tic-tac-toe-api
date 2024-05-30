@@ -9,8 +9,8 @@ export class CreatePlayerSeasonDto {
 
   playerSeason: {
     season: number;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
     clubCode: string;
   };
 }

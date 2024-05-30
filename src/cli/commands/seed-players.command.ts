@@ -4,7 +4,7 @@ import { ProballersSeedCommand } from "./proballers-seed.command";
 
 @Command({
   name: "seed-players",
-  options: { isDefault: true },
+  options: { isDefault: false },
   subCommands: [EuroleagueApiSeedCommand, ProballersSeedCommand],
 })
 export class SeedPlayersCommand extends CommandRunner {

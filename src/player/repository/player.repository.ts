@@ -46,57 +46,60 @@ export class PlayerRepository {
   // TODO: split to insert and upsert
   insertSeasonPlayers = async (playerSeasonPayload: CreatePlayerSeasonDto[]) => {
     // Upsert players (add country and image if we don't already have it)
-    await Promise.all(
-      playerSeasonPayload
-        .filter(({ player }) => player?.country && player?.birthDate && player?.firstName && player?.lastName)
-        .map((ps) => {
-          return this.dbContext
-            .insert(players)
-            .values(ps.player)
-            .onConflictDoUpdate({
-              target: [players.firstName, players.lastName, players.birthDate],
-              set: {
-                country: sql`COALESCE(players.country, EXCLUDED.country)`,
-                imageUrl: sql`COALESCE(players.image_url, EXCLUDED.image_url)`,
-                updatedAt: new Date(),
-              },
-            });
+    return this.dbContext.transaction(async (tx) => {
+      await Promise.all(
+        playerSeasonPayload
+          .filter(({ player }) => player?.country && player?.birthDate && player?.firstName && player?.lastName)
+          .map((ps) => {
+            return tx
+              .insert(players)
+              .values(ps.player)
+              .onConflictDoUpdate({
+                target: [players.firstName, players.lastName, players.birthDate],
+                set: {
+                  country: sql`COALESCE(players.country, EXCLUDED.country)`,
+                  imageUrl: sql`COALESCE(players.image_url, EXCLUDED.image_url)`,
+                  updatedAt: new Date(),
+                },
+                where: sql`players.country IS NULL OR players.image_url IS NULL`,
+              });
+          }),
+      );
+
+      await Promise.all(
+        playerSeasonPayload.map(async (playerSeason) => {
+          const playerData = await tx
+            .select({ id: players.id })
+            .from(players)
+            .where(
+              and(
+                eq(players.firstName, playerSeason.player?.firstName),
+                eq(players.lastName, playerSeason.player?.lastName),
+                eq(players.birthDate, playerSeason.player?.birthDate),
+              ),
+            );
+
+          const clubData = await tx
+            .select({ id: clubs.id })
+            .from(clubs)
+            .where(eq(clubs.code, playerSeason.playerSeason?.clubCode));
+
+          const { startDate, endDate, season } = playerSeason.playerSeason;
+
+          if (playerData?.length && clubData?.length) {
+            await tx
+              .insert(playerSeasons)
+              .values({
+                startDate,
+                endDate,
+                season,
+                playerId: playerData[0].id,
+                clubId: clubData[0].id,
+              })
+              .onConflictDoNothing();
+          }
         }),
-    );
-
-    await Promise.all(
-      playerSeasonPayload.map(async (playerSeason) => {
-        const playerData = await this.dbContext
-          .select({ id: players.id })
-          .from(players)
-          .where(
-            and(
-              eq(players.firstName, playerSeason.player?.firstName),
-              eq(players.lastName, playerSeason.player?.lastName),
-              eq(players.birthDate, playerSeason.player?.birthDate),
-            ),
-          );
-
-        const clubData = await this.dbContext
-          .select({ id: clubs.id })
-          .from(clubs)
-          .where(eq(clubs.code, playerSeason.playerSeason?.clubCode));
-
-        const { startDate, endDate, season } = playerSeason.playerSeason;
-
-        if (playerData?.length && clubData?.length) {
-          await this.dbContext
-            .insert(playerSeasons)
-            .values({
-              startDate,
-              endDate,
-              season,
-              playerId: playerData[0].id,
-              clubId: clubData[0].id,
-            })
-            .onConflictDoNothing();
-        }
-      }),
-    );
+      );
+    });
   };
 }

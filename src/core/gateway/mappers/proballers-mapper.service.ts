@@ -130,15 +130,15 @@ export class ProballersMapperService {
    * Get the assumed start date for a season (Sep 30)
    * @param season
    */
-  private assumeSeasonStart(season: number): Date {
-    return new Date(`09/30/${season}`);
+  private assumeSeasonStart(season: number): string {
+    return `09/30/${season}`;
   }
 
   /**
    * Get the assumed end date for a season (June 30)
    * @param season
    */
-  private assumeSeasonEnd(season: number): Date {
-    return new Date(`06/30/${season + 1}`);
+  private assumeSeasonEnd(season: number): string {
+    return `06/30/${season + 1}`;
   }
 }

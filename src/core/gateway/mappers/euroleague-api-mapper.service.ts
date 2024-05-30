@@ -36,8 +36,8 @@ export class EuroleagueApiMapperService {
         imageUrl: gatewatPlayerSeason?.images && gatewatPlayerSeason.images?.headshot,
       },
       playerSeason: {
-        startDate: new Date(gatewatPlayerSeason.startDate),
-        endDate: new Date(gatewatPlayerSeason.endDate),
+        startDate: gatewatPlayerSeason.startDate,
+        endDate: gatewatPlayerSeason.endDate,
         clubCode: gatewatPlayerSeason.club.code,
         season: gatewatPlayerSeason.season.year,
       },
