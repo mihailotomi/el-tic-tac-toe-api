@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { integer, serial, text, pgTable, char, unique, index, timestamp } from "drizzle-orm/pg-core";
+import { integer, serial, text, pgTable, char, unique, index, timestamp, date } from "drizzle-orm/pg-core";
 
 export const players = pgTable(
   "players",
@@ -7,7 +7,7 @@ export const players = pgTable(
     id: serial("id").primaryKey(),
     firstName: text("first_name").notNull(),
     lastName: text("last_name").notNull(),
-    birthDate: timestamp("birth_date").notNull(),
+    birthDate: date("birth_date").notNull(),
     country: char("country", { length: 3 }),
     imageUrl: text("image_url"),
     createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
@@ -45,9 +45,9 @@ export const playerSeasons = pgTable(
     id: serial("id").primaryKey(),
     clubId: integer("club_id").references(() => clubs.id),
     playerId: integer("player_id").references(() => players.id),
-    season: integer("season_name").notNull(),
-    startDate: timestamp("start_date").notNull(),
-    endDate: timestamp("end_date").notNull(),
+    season: integer("season").notNull(),
+    startDate: date("start_date").notNull(),
+    endDate: date("end_date").notNull(),
     createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
     updatedAt: timestamp("updated_at")
       .default(sql`CURRENT_TIMESTAMP`)

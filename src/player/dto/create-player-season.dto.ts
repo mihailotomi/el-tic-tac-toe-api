@@ -2,7 +2,7 @@ export class CreatePlayerSeasonDto {
   player: {
     firstName: string;
     lastName: string;
-    birthDate: Date;
+    birthDate: string;
     country: string;
     imageUrl?: string;
   };

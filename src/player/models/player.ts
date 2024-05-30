@@ -5,7 +5,7 @@ export class Player {
 
   lastName: string;
 
-  birthDate: Date;
+  birthDate: string;
 
   country: string;
 

@@ -118,14 +118,12 @@ export class ProballersMapperService {
   /**
    * parse player birthdate from age string (eg. APR 22, 1991 (33 YEARS OLD))
    * @param {string} birthDateAndAgeString - string containing the birth date and the age
-   * @returns {Date} - birth date
+   * @returns {string} - birth date
    */
-  private parseBirthdate(birthDateAndAgeString: string): Date {
-    const birthdateString = `${birthDateAndAgeString.split(" ")[0]} ${birthDateAndAgeString.split(" ")[1]}, ${
+  private parseBirthdate(birthDateAndAgeString: string): string {
+    return `${birthDateAndAgeString.split(" ")[0]} ${birthDateAndAgeString.split(" ")[1]}, ${
       birthDateAndAgeString.split(" ")[2]
     }`;
-
-    return new Date(birthdateString);
   }
 
   /**

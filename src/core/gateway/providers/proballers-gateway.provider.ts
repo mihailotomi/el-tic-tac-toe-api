@@ -57,7 +57,7 @@ export class ProballersGatewayProvider {
       return this.mapper.playerDataToCreateDto(response.data, seasons, clubCode);
     } catch (error) {
       // TODO: throw custom exception
-      console.log(error);
+      console.log("Error with: " + playerUrl);
 
       // throw new HttpException(error?.message || "", 400);
     }

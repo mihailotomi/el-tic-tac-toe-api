@@ -1,2 +1,0 @@
-ALTER TABLE "players" DROP CONSTRAINT "players_external_id_unique";--> statement-breakpoint
-ALTER TABLE "players" ADD CONSTRAINT "players_name_birth_date_country_unique" UNIQUE("name","birth_date","country");

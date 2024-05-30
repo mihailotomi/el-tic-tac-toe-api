@@ -1,13 +1,14 @@
 import { ConsoleLogger } from "@nestjs/common";
 import { CommandRunner, Option, SubCommand } from "nest-commander";
 import { ProballersGatewayProvider } from "src/core/gateway/providers/proballers-gateway.provider";
-import * as fs from "fs";
+import { PlayerService } from "src/player/services/player.service";
 
 @SubCommand({
   name: "proballers",
 })
 export class ProballersSeedCommand extends CommandRunner {
   constructor(
+    private playerService: PlayerService,
     private proballersGateway: ProballersGatewayProvider,
     private logger: ConsoleLogger,
   ) {
@@ -20,10 +21,11 @@ export class ProballersSeedCommand extends CommandRunner {
       options.clubUri,
       options.clubCode,
     );
-    const playerDtoList = await Promise.all(
+    const playerSeasonPayloads = await Promise.all(
       playersIntermediateDtoList.map(this.proballersGateway.getPlayerSeasonDetails),
     );
-    await fs.promises.writeFile("player_table.json", JSON.stringify(playerDtoList));
+    
+    await this.playerService.populatePlayers(playerSeasonPayloads.flatMap((p) => p).filter(p=>!!p));
     this.logger.log(`[Proballers] - Finised seeding players for club: ${options.clubCode}`);
   }
 

@@ -32,7 +32,7 @@ export class EuroleagueApiMapperService {
         firstName,
         lastName,
         country: gatewatPlayerSeason.person?.country?.code,
-        birthDate: new Date(gatewatPlayerSeason.person.birthDate),
+        birthDate: gatewatPlayerSeason.person.birthDate,
         imageUrl: gatewatPlayerSeason?.images && gatewatPlayerSeason.images?.headshot,
       },
       playerSeason: {
