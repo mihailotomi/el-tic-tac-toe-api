@@ -25,7 +25,7 @@ export class ProballersSeedCommand extends CommandRunner {
       playersIntermediateDtoList.map(this.proballersGateway.getPlayerSeasonDetails),
     );
     
-    await this.playerService.populatePlayers(playerSeasonPayloads.flatMap((p) => p).filter(p=>!!p));
+    // await this.playerService.insertPlayers(playerSeasonPayloads.flatMap((p) => p).filter(p=>!!p));
     this.logger.log(`[Proballers] - Finised seeding players for club: ${options.clubCode}`);
   }
 

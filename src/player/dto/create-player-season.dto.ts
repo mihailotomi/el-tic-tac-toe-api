@@ -1,11 +1,7 @@
+import { CreatePlayerDto } from "./create-player.dto";
+
 export class CreatePlayerSeasonDto {
-  player: {
-    firstName: string;
-    lastName: string;
-    birthDate: string;
-    country: string;
-    imageUrl?: string;
-  };
+  player: CreatePlayerDto;
 
   playerSeason: {
     season: number;

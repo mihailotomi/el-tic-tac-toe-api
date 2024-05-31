@@ -6,6 +6,7 @@ import { clubs, playerSeasons, players } from "src/core/database/schema/schema";
 import { CreatePlayerSeasonDto } from "../dto/create-player-season.dto";
 import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
 import { Player } from "../models/player";
+import { CreatePlayerDto } from "../dto/create-player.dto";
 
 @Injectable()
 export class PlayerRepository {
@@ -43,31 +44,47 @@ export class PlayerRepository {
     return result.played;
   };
 
-  // TODO: split to insert and upsert
-  insertSeasonPlayers = async (playerSeasonPayload: CreatePlayerSeasonDto[]) => {
-    // Upsert players (add country and image if we don't already have it)
+  /**
+   * Insert a batch of player if they don't exist in db
+   * @param {CreatePlayerDto[]} playerDtoList list of dtos
+   */
+  insertPlayers = async (playerDtoList: CreatePlayerDto[]): Promise<void> => {
+    await this.dbContext.insert(players).values(playerDtoList).onConflictDoNothing();
+  };
+
+  /**
+   * Insert or update country and image if they are null
+   * @param {CreatePlayerDto[]} playerDtoList list of dtos
+   */
+  upsertPlayers = async (playerDtoList: CreatePlayerDto[]): Promise<void> => {
+    await Promise.all(
+      playerDtoList
+        .filter((player) => player?.country && player?.birthDate && player?.firstName && player?.lastName)
+        .map((player) => {
+          return this.dbContext
+            .insert(players)
+            .values(player)
+            .onConflictDoUpdate({
+              target: [players.firstName, players.lastName, players.birthDate],
+              set: {
+                country: sql`COALESCE(players.country, EXCLUDED.country)`,
+                imageUrl: sql`COALESCE(players.image_url, EXCLUDED.image_url)`,
+                updatedAt: new Date(),
+              },
+              where: sql`players.country IS NULL OR players.image_url IS NULL`,
+            });
+        }),
+    );
+  };
+
+  /**
+   * Insert a season which player played
+   * @param {CreatePlayerSeasonDto[]} playerSeasonDtoList list of dtos
+   */
+  insertPlayerSeasons = async (playerSeasonDtoList: CreatePlayerSeasonDto[]) => {
     return this.dbContext.transaction(async (tx) => {
       await Promise.all(
-        playerSeasonPayload
-          .filter(({ player }) => player?.country && player?.birthDate && player?.firstName && player?.lastName)
-          .map((ps) => {
-            return tx
-              .insert(players)
-              .values(ps.player)
-              .onConflictDoUpdate({
-                target: [players.firstName, players.lastName, players.birthDate],
-                set: {
-                  country: sql`COALESCE(players.country, EXCLUDED.country)`,
-                  imageUrl: sql`COALESCE(players.image_url, EXCLUDED.image_url)`,
-                  updatedAt: new Date(),
-                },
-                where: sql`players.country IS NULL OR players.image_url IS NULL`,
-              });
-          }),
-      );
-
-      await Promise.all(
-        playerSeasonPayload.map(async (playerSeason) => {
+        playerSeasonDtoList.map(async (playerSeason) => {
           const playerData = await tx
             .select({ id: players.id })
             .from(players)

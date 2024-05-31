@@ -5,6 +5,7 @@ import { SearchPlayerDto } from "../dto/search-player.dto";
 import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
 import { PlayerDto } from "../dto/player.dto";
 import { CreatePlayerSeasonDto } from "../dto/create-player-season.dto";
+import { CreatePlayerDto } from "../dto/create-player.dto";
 
 @Injectable()
 export class PlayerService {
@@ -33,10 +34,26 @@ export class PlayerService {
   };
 
   /**
-   * Insert or upsert a barch of players and their seasons
-   * @param {CreatePlayerSeasonDto[]} playerSeasonPayloads
+   * Insert a batch of players if not present
+   * @param {CreatePlayerDto[]} playerDtoList
    */
-  populatePlayers = async (playerSeasonPayloads: CreatePlayerSeasonDto[]) => {
-    return this.playerRepository.insertSeasonPlayers(playerSeasonPayloads);
+  insertPlayers = async (playerDtoList: CreatePlayerDto[]) => {
+    return this.playerRepository.insertPlayers(playerDtoList);
+  };
+
+  /**
+   * Upsert a batch of players if not present
+   * @param {CreatePlayerDto[]} playerDtoList
+   */
+  upsertPlayers = async (playerDtoList: CreatePlayerDto[]) => {
+    return this.playerRepository.upsertPlayers(playerDtoList);
+  };
+
+  /**
+   * Insert a batch of seasons players have played
+   * @param {CreatePlayerSeasonDto[]} playerSeasonDtoList
+   */
+  upsertPlayerSeasons = async (playerSeasonDtoList: CreatePlayerSeasonDto[]) => {
+    return this.playerRepository.insertPlayerSeasons(playerSeasonDtoList);
   };
 }
