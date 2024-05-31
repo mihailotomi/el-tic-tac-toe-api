@@ -58,22 +58,20 @@ export class PlayerRepository {
    */
   upsertPlayers = async (playerDtoList: CreatePlayerDto[]): Promise<void> => {
     await Promise.all(
-      playerDtoList
-        .filter((player) => player?.country && player?.birthDate && player?.firstName && player?.lastName)
-        .map((player) => {
-          return this.dbContext
-            .insert(players)
-            .values(player)
-            .onConflictDoUpdate({
-              target: [players.firstName, players.lastName, players.birthDate],
-              set: {
-                country: sql`COALESCE(players.country, EXCLUDED.country)`,
-                imageUrl: sql`COALESCE(players.image_url, EXCLUDED.image_url)`,
-                updatedAt: new Date(),
-              },
-              where: sql`players.country IS NULL OR players.image_url IS NULL`,
-            });
-        }),
+      playerDtoList.map((player) => {
+        return this.dbContext
+          .insert(players)
+          .values(player)
+          .onConflictDoUpdate({
+            target: [players.firstName, players.lastName, players.birthDate],
+            set: {
+              country: sql`COALESCE(players.country, EXCLUDED.country)`,
+              imageUrl: sql`COALESCE(players.image_url, EXCLUDED.image_url)`,
+              updatedAt: new Date(),
+            },
+            where: sql`players.country IS NULL OR players.image_url IS NULL`,
+          });
+      }),
     );
   };
 

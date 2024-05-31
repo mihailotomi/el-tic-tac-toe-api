@@ -16,27 +16,20 @@ export class ProballersSeedCommand extends CommandRunner {
     super();
   }
 
-  async run(_inputs: string[], options: { clubUri: string; clubCode: string }): Promise<void> {
+  async run(_inputs: string[], options: { clubCode: string }): Promise<void> {
     this.logger.log(`[Proballers] - Seeding players for club: ${options.clubCode}`);
-    const playersIntermediateDtoList = await this.proballersGateway.getClubHistoricRoster(
-      options.clubUri,
-      options.clubCode,
-    );
-    const playerSeasonPayloads = await Promise.all(
-      playersIntermediateDtoList.map(this.proballersGateway.getPlayerSeasonDetails),
-    );
 
-    // await this.playerService.insertPlayers(playerSeasonPayloads.flatMap((p) => p).filter(p=>!!p));
-    this.logger.log(`[Proballers] - Finised seeding players for club: ${options.clubCode}`);
-  }
+    try {
+      const { playerDtoList, playerSeasonDtoList } = await this.proballersGateway.getClubHistoricRoster(
+        options.clubCode,
+      );
 
-  @Option({
-    flags: "--club-uri <club-uri>",
-    name: "clubUri",
-    description: "Proballers URI of the club",
-  })
-  getClubUriOption(option: string) {
-    return option;
+      await this.playerService.upsertPlayers(playerDtoList);
+      this.logger.log(`[Proballers] - Finised seeding players for club: ${options.clubCode}`);
+    } catch (error) {
+      this.logger.error(`[Proballers] - Error while seeding players for club: ${options.clubCode}}`);
+      this.logger.error(error?.message || error.error.message);
+    }
   }
 
   @Option({

@@ -3,6 +3,8 @@ import cheerio from "cheerio";
 import { CreatePlayerSeasonDto } from "src/player/dto/create-player-season.dto";
 import { ProballersPlayerIntermediateDto } from "../dto/proballers-player-intermediate.dto";
 import { NationalityMapperService } from "./nationality-mapper.service";
+import { CreatePlayerDto } from "src/player/dto/create-player.dto";
+import { playerSeasons } from "src/core/database/schema/schema";
 
 @Injectable()
 export class ProballersMapperService {
@@ -51,7 +53,11 @@ export class ProballersMapperService {
    * @param {string} clubCode - code of the club
    * @returns {CreatePlayerSeasonDto[]} - entrypoint dto list for storing player seasons
    */
-  playerDataToCreateDto = (html: string, seasons: number[], clubCode: string): CreatePlayerSeasonDto[] => {
+  playerDataToCreateDto = (
+    html: string,
+    seasons: number[],
+    clubCode: string,
+  ): { player: CreatePlayerDto; playerSeasons: CreatePlayerSeasonDto[] } => {
     const $ = cheerio.load(html);
     // Player name
     const playerNameContainer = $("html body").find(".identity__name");
@@ -79,21 +85,32 @@ export class ProballersMapperService {
     const nationality = $("html body").find(".identity__profil").children().first().text();
     const country = this.nationalityMapper.nationalityToCountryISO(nationality);
 
-    return seasons.map((season) => ({
-      player: {
-        firstName: names[0],
-        lastName: names[1],
-        imageUrl: imageUrl.includes("head-par-defaut") ? null : imageUrl,
-        birthDate,
-        country,
-      },
-      playerSeason: {
-        season: 2023,
-        startDate: this.assumeSeasonStart(season),
-        endDate: this.assumeSeasonEnd(season),
-        clubCode,
-      },
-    }));
+    const player = {
+      firstName: names[0].toUpperCase(),
+      lastName: names[1].toUpperCase(),
+      imageUrl: imageUrl.includes("head-par-defaut") ? null : imageUrl,
+      birthDate,
+      country,
+    };
+
+    return {
+      player,
+      playerSeasons: seasons && seasons.map((season) => ({
+        player: {
+          firstName: names[0],
+          lastName: names[1],
+          imageUrl: imageUrl.includes("head-par-defaut") ? null : imageUrl,
+          birthDate,
+          country,
+        },
+        playerSeason: {
+          season: 2023,
+          startDate: this.assumeSeasonStart(season),
+          endDate: this.assumeSeasonEnd(season),
+          clubCode,
+        },
+      })),
+    };
   };
 
   /**

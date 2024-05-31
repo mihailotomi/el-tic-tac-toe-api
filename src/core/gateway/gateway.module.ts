@@ -8,7 +8,7 @@ import { NationalityMapperService } from "./mappers/nationality-mapper.service";
 import { InfrastructureModule } from "../infrastructure/infrastructure.module";
 
 @Module({
-  imports: [HttpModule, InfrastructureModule.register({ logging: { useFile: true, filePath: "logs/gateway-errors" } })],
+  imports: [HttpModule, InfrastructureModule.register({ logging: { useFile: true, filePath: "logs/gateway.log" } })],
   providers: [
     EuroleagueApiGatewayProvider,
     ProballersGatewayProvider,
