@@ -5,9 +5,10 @@ import { ProballersGatewayProvider } from "./providers/proballers-gateway.provid
 import { ProballersMapperService } from "./mappers/proballers-mapper.service";
 import { EuroleagueApiMapperService } from "./mappers/euroleague-api-mapper.service";
 import { NationalityMapperService } from "./mappers/nationality-mapper.service";
+import { InfrastructureModule } from "../infrastructure/infrastructure.module";
 
 @Module({
-  imports: [HttpModule],
+  imports: [HttpModule, InfrastructureModule.register({ logging: { useFile: true, filePath: "logs/gateway-errors" } })],
   providers: [
     EuroleagueApiGatewayProvider,
     ProballersGatewayProvider,

@@ -1,9 +1,9 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, ConsoleLogger } from "@nestjs/common";
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Inject, LoggerService } from "@nestjs/common";
 import { Request, Response } from "express";
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
-  constructor(private logger: ConsoleLogger) {}
+  constructor(@Inject("LoggerService") private logger: LoggerService) {}
 
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -11,13 +11,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
 
-    this.logger.setContext(exception.name);
-
     this.logger.error("Following error occured:");
     this.logger.error(exception.message);
 
     this.logger.warn(exception.stack);
-    this.logger.resetContext();
 
     const errorResponse = exception.getResponse() as { message?: string | string[] };
 

@@ -1,7 +1,8 @@
 import { Command, CommandRunner } from "nest-commander";
 import { ClubService } from "src/club/services/club.service";
 import { EuroleagueApiGatewayProvider } from "src/core/gateway/providers/euroleague-api-gateway.provider";
-import { ConsoleLogger } from "@nestjs/common";
+import { ConsoleLogger, Inject, LoggerService } from "@nestjs/common";
+import { LOGGER } from "src/core/infrastructure/logging/injection-token";
 
 @Command({
   name: "seed-clubs",
@@ -11,7 +12,7 @@ export class SeedClubsCommand extends CommandRunner {
   constructor(
     private clubService: ClubService,
     private euroleagueGateway: EuroleagueApiGatewayProvider,
-    private logger: ConsoleLogger,
+    @Inject(LOGGER) private logger: LoggerService,
   ) {
     super();
   }

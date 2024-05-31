@@ -1,6 +1,7 @@
-import { ConsoleLogger } from "@nestjs/common";
+import { ConsoleLogger, Inject, LoggerService } from "@nestjs/common";
 import { CommandRunner, Option, SubCommand } from "nest-commander";
 import { ProballersGatewayProvider } from "src/core/gateway/providers/proballers-gateway.provider";
+import { LOGGER } from "src/core/infrastructure/logging/injection-token";
 import { PlayerService } from "src/player/services/player.service";
 
 @SubCommand({
@@ -10,7 +11,7 @@ export class ProballersSeedCommand extends CommandRunner {
   constructor(
     private playerService: PlayerService,
     private proballersGateway: ProballersGatewayProvider,
-    private logger: ConsoleLogger,
+    @Inject(LOGGER) private logger: LoggerService,
   ) {
     super();
   }
@@ -24,7 +25,7 @@ export class ProballersSeedCommand extends CommandRunner {
     const playerSeasonPayloads = await Promise.all(
       playersIntermediateDtoList.map(this.proballersGateway.getPlayerSeasonDetails),
     );
-    
+
     // await this.playerService.insertPlayers(playerSeasonPayloads.flatMap((p) => p).filter(p=>!!p));
     this.logger.log(`[Proballers] - Finised seeding players for club: ${options.clubCode}`);
   }

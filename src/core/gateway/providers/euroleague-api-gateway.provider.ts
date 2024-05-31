@@ -1,5 +1,5 @@
 import { HttpService } from "@nestjs/axios";
-import { HttpException, Injectable } from "@nestjs/common";
+import { HttpException, Injectable, Scope } from "@nestjs/common";
 import { firstValueFrom } from "rxjs";
 import { ConfigService } from "@nestjs/config";
 import { CreateClubDto } from "src/club/dto/create-club.dto";
@@ -9,7 +9,7 @@ import { GatewayPlayerSeasonDto } from "../dto/gateway-player-season.dto";
 import { EuroleagueApiMapperService } from "../mappers/euroleague-api-mapper.service";
 import { CreatePlayerDto } from "src/player/dto/create-player.dto";
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 export class EuroleagueApiGatewayProvider {
   private baseUrl: string;
 

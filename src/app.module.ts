@@ -19,11 +19,11 @@ import { SeedClubsCommand } from "./cli/commands/seed-clubs.command";
     ClubModule,
     ConfigModule.forRoot({ isGlobal: true, envFilePath: ".env.local" }),
     DatabaseModule,
-    InfrastructureModule,
+    InfrastructureModule.register({ logging: { useFile: false } }),
     GridModule,
     GatewayModule,
   ],
   controllers: [],
-  providers: [ConsoleLogger, SeedPlayersCommand, EuroleagueApiSeedCommand, ProballersSeedCommand, SeedClubsCommand],
+  providers: [SeedPlayersCommand, EuroleagueApiSeedCommand, ProballersSeedCommand, SeedClubsCommand],
 })
 export class AppModule {}

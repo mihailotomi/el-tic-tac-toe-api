@@ -1,8 +1,9 @@
-import { ConsoleLogger } from "@nestjs/common";
+import { ConsoleLogger, Inject, LoggerService } from "@nestjs/common";
 import { CommandRunner, Option, SubCommand } from "nest-commander";
 import { EuroleagueApiGatewayProvider } from "src/core/gateway/providers/euroleague-api-gateway.provider";
 import { PlayerService } from "src/player/services/player.service";
 import fs from "fs";
+import { LOGGER } from "src/core/infrastructure/logging/injection-token";
 
 @SubCommand({
   name: "el-api",
@@ -11,13 +12,13 @@ export class EuroleagueApiSeedCommand extends CommandRunner {
   constructor(
     private playerService: PlayerService,
     private euroleagueApiGateway: EuroleagueApiGatewayProvider,
-    private logger: ConsoleLogger,
+    @Inject(LOGGER) private logger: LoggerService,
   ) {
     super();
   }
 
   async run(_inputs: string[], options: { season: number }): Promise<void> {
-    const seasons = options.season ? [options.season] : Array.from({ length: 2014 - 2000 + 1 }, (v, i) => 2014 - i);
+    const seasons = options.season ? [options.season] : Array.from({ length: 2014 - 2000 + 1 }, (_v, i) => 2014 - i);
     for (let season of seasons) {
       try {
         this.logger.log(`[Euroleague API] - Seeding players for season: ${season}`);

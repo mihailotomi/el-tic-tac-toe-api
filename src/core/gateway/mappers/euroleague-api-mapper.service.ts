@@ -1,11 +1,13 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable, LoggerService } from "@nestjs/common";
 import { CreateClubDto } from "src/club/dto/create-club.dto";
-import { CreatePlayerSeasonDto } from "src/player/dto/create-player-season.dto";
 import { GatewayClubDto } from "../dto/gateway-club.dto";
 import { GatewayPlayerSeasonDto } from "../dto/gateway-player-season.dto";
+import { LOGGER } from "src/core/infrastructure/logging/injection-token";
 
 @Injectable()
 export class EuroleagueApiMapperService {
+  constructor(@Inject(LOGGER) private logger: LoggerService) {}
+
   /**
    * Map gateway club payload to a creation suitable dto
    * @param {GatewayClubDto} gatewayClub
@@ -36,8 +38,7 @@ export class EuroleagueApiMapperService {
         !gatewatPlayerSeason.startDate ||
         !gatewatPlayerSeason.endDate
       ) {
-        // TODO: store in error log
-
+        this.logger.error(`Error for player: ${gatewatPlayerSeason?.person?.name}`);
         continue;
       }
 
