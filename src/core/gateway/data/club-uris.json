@@ -1,1 +1,8 @@
-{ "PAR": "565/partizan-belgrade", "ULK": "552/fenerbahce-istanbul" }
+{
+  "PAR": "565/partizan-belgrade",
+  "ULK": "552/fenerbahce-istanbul",
+  "MAD": "160/real-madrid",
+  "BER": "384/alba-berlin",
+  "IST": "543/anadolu-efes-istanbul",
+  "MCO": "283/as-monaco"
+}

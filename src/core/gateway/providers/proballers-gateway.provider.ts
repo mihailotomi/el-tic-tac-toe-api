@@ -8,6 +8,8 @@ import { CreatePlayerSeasonDto } from "src/player/dto/create-player-season.dto";
 import { CreatePlayerDto } from "src/player/dto/create-player.dto";
 import clubUris from "../data/club-uris.json";
 import { LOGGER } from "src/core/infrastructure/logging/injection-token";
+import { validate } from "class-validator";
+import { plainToInstance } from "class-transformer";
 
 @Injectable()
 export class ProballersGatewayProvider {
@@ -34,14 +36,17 @@ export class ProballersGatewayProvider {
 
     for (const dto of playersIntermediateDtoList) {
       const data = await this.getPlayerSeasonDetails(dto);
-      if (data && data.player && data.player.firstName && data.player.lastName && data.player.birthDate) {
+      const errors = await validate(plainToInstance(CreatePlayerDto, data.player));
+
+      if (!errors.length) {
         playerDtoList.push(data.player);
         for (let ps of data.playerSeasons) {
           playerSeasonDtoList.push(ps);
         }
       } else {
-        this.logger.error(`Error for player: ${data.player || data.player.firstName}`);
-        this.logger.error(data);
+        this.logger.error(`Error for player: ${data.player && data.player.firstName}`);
+        this.logger.error(errors);
+        this.logger.error(data.player)
       }
     }
 
