@@ -3,11 +3,11 @@ import { Inject, Injectable } from "@nestjs/common";
 import { DB_CONTEXT } from "src/core/database/constants/injection-token";
 import { DbType } from "src/core/database/schema/db-type";
 import { clubs, playerSeasons, players } from "src/core/database/schema/schema";
+import { Club } from "src/club/models/club";
 import { CreatePlayerSeasonDto } from "../dto/create-player-season.dto";
 import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
 import { Player } from "../models/player";
 import { CreatePlayerDto } from "../dto/create-player.dto";
-import { Club } from "src/club/models/club";
 
 @Injectable()
 export class PlayerRepository {

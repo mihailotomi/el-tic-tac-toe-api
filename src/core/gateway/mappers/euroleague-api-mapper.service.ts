@@ -1,8 +1,8 @@
 import { Inject, Injectable, LoggerService } from "@nestjs/common";
 import { CreateClubDto } from "src/club/dto/create-club.dto";
+import { LOGGER } from "src/core/infrastructure/logging/injection-token";
 import { GatewayClubDto } from "../dto/gateway-club.dto";
 import { GatewayPlayerSeasonDto } from "../dto/gateway-player-season.dto";
-import { LOGGER } from "src/core/infrastructure/logging/injection-token";
 
 @Injectable()
 export class EuroleagueApiMapperService {

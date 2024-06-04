@@ -19,7 +19,7 @@ export class EuroleagueApiSeedCommand extends CommandRunner {
 
   async run(_inputs: string[], options: { season: number }): Promise<void> {
     const seasons = options.season ? [options.season] : Array.from({ length: 2014 - 2000 + 1 }, (_v, i) => 2014 - i);
-    for (let season of seasons) {
+    for (const season of seasons) {
       try {
         this.logger.log(`[Euroleague API] - Seeding players for season: ${season}`);
         const { players: createPlayerDtoList, playerSeasons: createPsDtoList } =

@@ -4,10 +4,10 @@ import { firstValueFrom } from "rxjs";
 import { ConfigService } from "@nestjs/config";
 import { CreateClubDto } from "src/club/dto/create-club.dto";
 import { CreatePlayerSeasonDto } from "src/player/dto/create-player-season.dto";
+import { CreatePlayerDto } from "src/player/dto/create-player.dto";
 import { GatewayClubDto } from "../dto/gateway-club.dto";
 import { GatewayPlayerSeasonDto } from "../dto/gateway-player-season.dto";
 import { EuroleagueApiMapperService } from "../mappers/euroleague-api-mapper.service";
-import { CreatePlayerDto } from "src/player/dto/create-player.dto";
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class EuroleagueApiGatewayProvider {

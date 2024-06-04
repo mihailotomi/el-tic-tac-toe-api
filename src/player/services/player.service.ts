@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { Club } from "src/club/models/club";
 import { PlayerRepository } from "../repository/player.repository";
 import { PlayerMapperService } from "./player-mapper.service";
 import { SearchPlayerDto } from "../dto/search-player.dto";
@@ -6,7 +7,6 @@ import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
 import { PlayerDto } from "../dto/player.dto";
 import { CreatePlayerSeasonDto } from "../dto/create-player-season.dto";
 import { CreatePlayerDto } from "../dto/create-player.dto";
-import { Club } from "src/club/models/club";
 
 @Injectable()
 export class PlayerService {

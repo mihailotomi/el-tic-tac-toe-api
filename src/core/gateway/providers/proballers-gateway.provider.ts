@@ -2,14 +2,14 @@ import { HttpService } from "@nestjs/axios";
 import { HttpException, Inject, Injectable, LoggerService } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { firstValueFrom } from "rxjs";
-import { ProballersMapperService } from "../mappers/proballers-mapper.service";
-import { ProballersPlayerIntermediateDto } from "../dto/proballers-player-intermediate.dto";
 import { CreatePlayerSeasonDto } from "src/player/dto/create-player-season.dto";
 import { CreatePlayerDto } from "src/player/dto/create-player.dto";
-import clubUris from "../data/club-uris.json";
 import { LOGGER } from "src/core/infrastructure/logging/injection-token";
 import { validate } from "class-validator";
 import { plainToInstance } from "class-transformer";
+import clubUris from "../data/club-uris.json";
+import { ProballersPlayerIntermediateDto } from "../dto/proballers-player-intermediate.dto";
+import { ProballersMapperService } from "../mappers/proballers-mapper.service";
 
 @Injectable()
 export class ProballersGatewayProvider {
@@ -40,7 +40,7 @@ export class ProballersGatewayProvider {
 
       if (!errors.length) {
         playerDtoList.push(data.player);
-        for (let ps of data.playerSeasons) {
+        for (const ps of data.playerSeasons) {
           playerSeasonDtoList.push(ps);
         }
       } else {

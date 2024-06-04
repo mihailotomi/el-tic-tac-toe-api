@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import cheerio from "cheerio";
 import { CreatePlayerSeasonDto } from "src/player/dto/create-player-season.dto";
-import { ProballersPlayerIntermediateDto } from "../dto/proballers-player-intermediate.dto";
-import { NationalityMapperService } from "./nationality-mapper.service";
 import { CreatePlayerDto } from "src/player/dto/create-player.dto";
 import { playerSeasons } from "src/core/database/schema/schema";
+import { ProballersPlayerIntermediateDto } from "../dto/proballers-player-intermediate.dto";
+import { NationalityMapperService } from "./nationality-mapper.service";
 
 @Injectable()
 export class ProballersMapperService {
@@ -189,6 +189,6 @@ export class ProballersMapperService {
   }
 
   private padZero(num: number): string {
-    return num < 10 ? "0" + num : num.toString();
+    return num < 10 ? `0${  num}` : num.toString();
   }
 }
