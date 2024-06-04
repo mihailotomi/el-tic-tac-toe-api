@@ -95,21 +95,23 @@ export class ProballersMapperService {
 
     return {
       player,
-      playerSeasons: seasons && seasons.map((season) => ({
-        player: {
-          firstName: names[0],
-          lastName: names[1],
-          imageUrl: imageUrl.includes("head-par-defaut") ? null : imageUrl,
-          birthDate,
-          country,
-        },
-        playerSeason: {
-          season: 2023,
-          startDate: this.assumeSeasonStart(season),
-          endDate: this.assumeSeasonEnd(season),
-          clubCode,
-        },
-      })),
+      playerSeasons:
+        seasons &&
+        seasons.map((season) => ({
+          player: {
+            firstName: names[0],
+            lastName: names[1],
+            imageUrl: imageUrl.includes("head-par-defaut") ? null : imageUrl,
+            birthDate,
+            country,
+          },
+          playerSeason: {
+            season: 2023,
+            startDate: this.assumeSeasonStart(season),
+            endDate: this.assumeSeasonEnd(season),
+            clubCode,
+          },
+        })),
     };
   };
 
@@ -133,14 +135,41 @@ export class ProballersMapperService {
   };
 
   /**
-   * parse player birthdate from age string (eg. APR 22, 1991 (33 YEARS OLD))
+   * parse player birthdate from Proballers age string (eg. APR 22, 1991 (33 YEARS OLD))
    * @param {string} birthDateAndAgeString - string containing the birth date and the age
    * @returns {string} - birth date
    */
   private parseBirthdate(birthDateAndAgeString: string): string {
-    return `${birthDateAndAgeString.split(" ")[0]} ${birthDateAndAgeString.split(" ")[1]}, ${
+    const unformatedDate = `${birthDateAndAgeString.split(" ")[0]} ${birthDateAndAgeString.split(" ")[1]}, ${
       birthDateAndAgeString.split(" ")[2]
     }`;
+
+    const months: { [key: string]: number } = {
+      Jan: 0,
+      Feb: 1,
+      Mar: 2,
+      Apr: 3,
+      May: 4,
+      Jun: 5,
+      Jul: 6,
+      Aug: 7,
+      Sep: 8,
+      Oct: 9,
+      Nov: 10,
+      Dec: 11,
+    };
+
+    const parts = unformatedDate.split(" ");
+
+    const day = parseInt(parts[1].replace(",", ""), 10);
+    const month = months[parts[0]];
+    const year = parseInt(parts[2], 10);
+
+    const date = new Date(year, month, day);
+
+    const formattedDate = `${date.getFullYear()}-${this.padZero(date.getMonth() + 1)}-${this.padZero(date.getDate())}`;
+
+    return formattedDate;
   }
 
   /**
@@ -157,5 +186,9 @@ export class ProballersMapperService {
    */
   private assumeSeasonEnd(season: number): string {
     return `06/30/${season + 1}`;
+  }
+
+  private padZero(num: number): string {
+    return num < 10 ? "0" + num : num.toString();
   }
 }

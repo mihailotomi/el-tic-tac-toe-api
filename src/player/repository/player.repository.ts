@@ -7,6 +7,7 @@ import { CreatePlayerSeasonDto } from "../dto/create-player-season.dto";
 import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
 import { Player } from "../models/player";
 import { CreatePlayerDto } from "../dto/create-player.dto";
+import { Club } from "src/club/models/club";
 
 @Injectable()
 export class PlayerRepository {
@@ -42,6 +43,27 @@ export class PlayerRepository {
       .where(and(eq(playerSeasons.playerId, playerId), inArray(playerSeasons.clubId, clubIds)));
 
     return result.played;
+  };
+
+  /** Returns all clubs a player has played for
+   * @param {number} playerId
+   * @returns {Promise<Club[]>}
+   */
+  getPlayerClubs = async (playerId: number): Promise<Club[]> => {
+    const result = await this.dbContext
+      .select({
+        id: clubs.id,
+        name: clubs.name,
+        code: clubs.code,
+        crestUrl: clubs.crestUrl,
+        createdAt: clubs.createdAt,
+        updatedAt: clubs.updatedAt,
+      })
+      .from(playerSeasons)
+      .where(eq(playerSeasons.playerId, playerId))
+      .innerJoin(clubs, eq(clubs.id, playerSeasons.clubId))
+      .groupBy();
+    return result;
   };
 
   /**

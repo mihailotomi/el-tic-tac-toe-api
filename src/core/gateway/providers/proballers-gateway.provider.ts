@@ -44,9 +44,9 @@ export class ProballersGatewayProvider {
           playerSeasonDtoList.push(ps);
         }
       } else {
-        this.logger.error(`Error for player: ${data.player && data.player.firstName}`);
+        this.logger.error(JSON.stringify(data));
+        this.logger.error(`Error for player: ${data.player && data.player.firstName} ${data.player && data.player.lastName}`);
         this.logger.error(errors);
-        this.logger.error(data.player)
       }
     }
 
@@ -75,7 +75,7 @@ export class ProballersGatewayProvider {
       return this.mapper.playerListRawToIntermediateDto(response.data, clubCode);
     } catch (error) {
       this.logger.error(`Error for club: ${clubCode}`);
-      this.logger.error(error?.message || error.error.message);
+      this.logger.error(error);
     }
   };
 

@@ -6,6 +6,7 @@ import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
 import { PlayerDto } from "../dto/player.dto";
 import { CreatePlayerSeasonDto } from "../dto/create-player-season.dto";
 import { CreatePlayerDto } from "../dto/create-player.dto";
+import { Club } from "src/club/models/club";
 
 @Injectable()
 export class PlayerService {
@@ -22,6 +23,14 @@ export class PlayerService {
   checkMatch = async ({ clubIds, playerId }: CheckPlayerMatchDto): Promise<{ isMatch: boolean }> => {
     const playedForClubs = await this.playerRepository.validatePlayerClubHistory({ clubIds, playerId });
     return { isMatch: playedForClubs };
+  };
+
+  /** Returns all clubs a player has played for
+   * @param {number} playerId
+   * @returns {Promise<Club[]>}
+   */
+  getPlayerClubHistory = (playerId: number): Promise<Club[]> => {
+    return this.playerRepository.getPlayerClubs(playerId);
   };
 
   /**

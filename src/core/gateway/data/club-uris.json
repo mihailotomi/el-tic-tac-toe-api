@@ -4,5 +4,19 @@
   "MAD": "160/real-madrid",
   "BER": "384/alba-berlin",
   "IST": "543/anadolu-efes-istanbul",
-  "MCO": "283/as-monaco"
+  "MCO": "283/as-monaco",
+  "BAS": "155/baskonia-vitoria-gasteiz",
+  "RED": "561/crvena-zvezda-belgrade",
+  "MIL": "178/ea7-emporio-armani-milan",
+  "BAR": "148/fc-barcelona",
+  "MUN": "2020/fc-bayern-munich",
+  "ASV": "1/ldlc-asvel",
+  "TEL": "609/maccabi-playtika-tel-aviv",
+  "OLY": "188/olympiacos-piraeus",
+  "PAN": "185/panathinaikos-athens",
+  "PAM": "153/valencia-basket",
+  "VIR": "165/virtus-segafredo-bologna",
+  "ZAL": "649/zalgiris-kaunas",
+  "CSK": "581/cska-moscow",
+  "UNK": "382/unics-kazan"
 }
