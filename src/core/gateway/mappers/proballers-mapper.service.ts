@@ -5,6 +5,8 @@ import { CreatePlayerDto } from "src/player/dto/create-player.dto";
 import { playerSeasons } from "src/core/database/schema/schema";
 import { ProballersPlayerIntermediateDto } from "../dto/proballers-player-intermediate.dto";
 import { NationalityMapperService } from "./nationality-mapper.service";
+import { validate } from "class-validator";
+import { plainToInstance } from "class-transformer";
 
 @Injectable()
 export class ProballersMapperService {
@@ -51,13 +53,13 @@ export class ProballersMapperService {
    * @param {string} html - HTML page containing player data with all of his seasons
    * @param {number[]} seasons
    * @param {string} clubCode - code of the club
-   * @returns {CreatePlayerSeasonDto[]} - entrypoint dto list for storing player seasons
+   * @returns {Promise<{ player: CreatePlayerDto; playerSeasons: CreatePlayerSeasonDto[] }>} - entrypoint dto list for storing player seasons
    */
-  playerDataToCreateDto = (
+  playerDataToCreateDto = async (
     html: string,
     seasons: number[],
     clubCode: string,
-  ): { player: CreatePlayerDto; playerSeasons: CreatePlayerSeasonDto[] } => {
+  ): Promise<{ player: CreatePlayerDto; playerSeasons: CreatePlayerSeasonDto[] }> => {
     const $ = cheerio.load(html);
     // Player name
     const playerNameContainer = $("html body").find(".identity__name");
@@ -93,25 +95,32 @@ export class ProballersMapperService {
       country,
     };
 
+    const playerSeasons =
+      seasons &&
+      seasons.map((season) => ({
+        player: {
+          firstName: names[0],
+          lastName: names[1],
+          imageUrl: imageUrl.includes("head-par-defaut") ? null : imageUrl,
+          birthDate,
+          country,
+        },
+        playerSeason: {
+          season: 2023,
+          startDate: this.assumeSeasonStart(season),
+          endDate: this.assumeSeasonEnd(season),
+          clubCode,
+        },
+      }));
+
+    const playerErrors = await validate(plainToInstance(CreatePlayerDto, player));
+    if (playerErrors) {
+      throw playerErrors;
+    }
+
     return {
       player,
-      playerSeasons:
-        seasons &&
-        seasons.map((season) => ({
-          player: {
-            firstName: names[0],
-            lastName: names[1],
-            imageUrl: imageUrl.includes("head-par-defaut") ? null : imageUrl,
-            birthDate,
-            country,
-          },
-          playerSeason: {
-            season: 2023,
-            startDate: this.assumeSeasonStart(season),
-            endDate: this.assumeSeasonEnd(season),
-            clubCode,
-          },
-        })),
+      playerSeasons,
     };
   };
 
@@ -189,6 +198,6 @@ export class ProballersMapperService {
   }
 
   private padZero(num: number): string {
-    return num < 10 ? `0${  num}` : num.toString();
+    return num < 10 ? `0${num}` : num.toString();
   }
 }

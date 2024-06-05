@@ -3,6 +3,10 @@ import { CreateClubDto } from "src/club/dto/create-club.dto";
 import { LOGGER } from "src/core/infrastructure/logging/injection-token";
 import { GatewayClubDto } from "../dto/gateway-club.dto";
 import { GatewayPlayerSeasonDto } from "../dto/gateway-player-season.dto";
+import { validate } from "class-validator";
+import { plainToInstance } from "class-transformer";
+import { CreatePlayerDto } from "src/player/dto/create-player.dto";
+import { CreatePlayerSeasonDto } from "src/player/dto/create-player-season.dto";
 
 @Injectable()
 export class EuroleagueApiMapperService {
@@ -25,22 +29,17 @@ export class EuroleagueApiMapperService {
    * Map gateway player seasons into a lists of player and player season create dtos
    * @param {GatewayPlayerSeasonDto[]} gatewatPlayerSeasons
    */
-  playerDataToCreateDtoLists = (gatewatPlayerSeasons: GatewayPlayerSeasonDto[]) => {
+  playerDataToCreateDtoLists = async (
+    gatewatPlayerSeasons: GatewayPlayerSeasonDto[],
+  ): Promise<{
+    players: CreatePlayerDto[];
+    playerSeasons: CreatePlayerSeasonDto[];
+  }> => {
     const players = [];
     const playerSeasons = [];
 
     for (const gatewatPlayerSeason of gatewatPlayerSeasons) {
       const [lastName, firstName] = gatewatPlayerSeason.person.name.split(", ");
-      if (
-        !lastName ||
-        !firstName ||
-        !gatewatPlayerSeason?.person?.birthDate ||
-        !gatewatPlayerSeason.startDate ||
-        !gatewatPlayerSeason.endDate
-      ) {
-        this.logger.error(`Error for player: ${gatewatPlayerSeason?.person?.name}`);
-        continue;
-      }
 
       const player = {
         firstName,
@@ -55,6 +54,11 @@ export class EuroleagueApiMapperService {
         clubCode: gatewatPlayerSeason.club.code,
         season: gatewatPlayerSeason.season.year,
       };
+
+      const playerErrors = await validate(plainToInstance(CreatePlayerDto, player));
+      if (playerErrors) {
+        throw playerErrors;
+      }
 
       players.push(player);
       playerSeasons.push({ player, playerSeason });

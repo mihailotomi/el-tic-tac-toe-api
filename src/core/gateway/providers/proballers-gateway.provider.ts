@@ -36,17 +36,12 @@ export class ProballersGatewayProvider {
 
     for (const dto of playersIntermediateDtoList) {
       const data = await this.getPlayerSeasonDetails(dto);
-      const errors = await validate(plainToInstance(CreatePlayerDto, data.player));
 
-      if (!errors.length) {
+      if (data) {
         playerDtoList.push(data.player);
         for (const ps of data.playerSeasons) {
           playerSeasonDtoList.push(ps);
         }
-      } else {
-        this.logger.error(JSON.stringify(data));
-        this.logger.error(`Error for player: ${data.player && data.player.firstName} ${data.player && data.player.lastName}`);
-        this.logger.error(errors);
       }
     }
 

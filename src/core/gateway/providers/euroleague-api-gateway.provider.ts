@@ -1,6 +1,5 @@
 import { HttpService } from "@nestjs/axios";
-import { HttpException, Injectable, Scope } from "@nestjs/common";
-import { firstValueFrom } from "rxjs";
+import { Inject, Injectable, LoggerService } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { CreateClubDto } from "src/club/dto/create-club.dto";
 import { CreatePlayerSeasonDto } from "src/player/dto/create-player-season.dto";
@@ -8,8 +7,9 @@ import { CreatePlayerDto } from "src/player/dto/create-player.dto";
 import { GatewayClubDto } from "../dto/gateway-club.dto";
 import { GatewayPlayerSeasonDto } from "../dto/gateway-player-season.dto";
 import { EuroleagueApiMapperService } from "../mappers/euroleague-api-mapper.service";
+import { LOGGER } from "src/core/infrastructure/logging/injection-token";
 
-@Injectable({ scope: Scope.TRANSIENT })
+@Injectable({})
 export class EuroleagueApiGatewayProvider {
   private baseUrl: string;
 
@@ -19,6 +19,7 @@ export class EuroleagueApiGatewayProvider {
     private httpService: HttpService,
     private mapper: EuroleagueApiMapperService,
     configService: ConfigService,
+    @Inject(LOGGER) private logger: LoggerService,
   ) {
     this.baseUrl = configService.get("EUROLEAGUE_API_URL");
   }
@@ -30,16 +31,15 @@ export class EuroleagueApiGatewayProvider {
    */
   async getClubsForSeason(season: number): Promise<CreateClubDto[]> {
     try {
-      const response = await firstValueFrom(
-        this.httpService.get<{ data: GatewayClubDto[]; total: number }>(
-          `${this.baseUrl}/v2/competitions/${this.competitionCode}/seasons/${this.competitionCode}${season}/clubs`,
-        ),
-      );
+      const response = await this.httpService.axiosRef<{ data: GatewayClubDto[]; total: number }>({
+        url: `${this.baseUrl}/v2/competitions/${this.competitionCode}/seasons/${this.competitionCode}${season}/clubs`,
+        method: "GET",
+      });
 
       return response.data.data.map(this.mapper.clubDataToCreateDto);
     } catch (error) {
-      // TODO: throw custom exception
-      throw new HttpException(error?.message || "", 400);
+      this.logger.error(`Clubs error for season: ${season}`);
+      this.logger.error(error);
     }
   }
 
@@ -52,16 +52,15 @@ export class EuroleagueApiGatewayProvider {
     season: number,
   ): Promise<{ playerSeasons: CreatePlayerSeasonDto[]; players: CreatePlayerDto[] }> {
     try {
-      const response = await firstValueFrom(
-        this.httpService.get<{ data: GatewayPlayerSeasonDto[]; total: number }>(
-          `${this.baseUrl}/v2/competitions/${this.competitionCode}/seasons/${this.competitionCode}${season}/people?personType=J`,
-        ),
-      );
+      const response = await this.httpService.axiosRef<{ data: GatewayPlayerSeasonDto[]; total: number }>({
+        url: `${this.baseUrl}/v2/competitions/${this.competitionCode}/seasons/${this.competitionCode}${season}/people?personType=J`,
+        method: "GET",
+      });
 
       return this.mapper.playerDataToCreateDtoLists(response.data.data);
     } catch (error) {
-      // TODO: throw custom exception
-      throw new HttpException(error?.message || "", 400);
+      this.logger.error(`Players error for season: ${season}`);
+      this.logger.error(error);
     }
   }
 }
