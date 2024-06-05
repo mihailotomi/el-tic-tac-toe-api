@@ -1,0 +1,64 @@
+{
+  "data": [
+    {
+      "person": {
+        "code": "010798",
+        "name": "AVDALAS, NEOKLIS",
+        "alias": "AVDALAS, NEOKLIS",
+        "aliasRaw": "AVDALAS, NEOKLIS",
+        "passportName": "NEOKLIS",
+        "passportSurname": "AVDALAS",
+        "jerseyName": "AVDALAS",
+        "abbreviatedName": "Avdalas, N.",
+        "country": {
+          "code": "GRE",
+          "name": "Greece"
+        },
+        "height": 196,
+        "weight": 90,
+        "birthDate": "2006-02-04T00:00:00",
+        "birthCountry": {
+          "code": "GRE",
+          "name": "Greece"
+        },
+        "twitterAccount": "",
+        "instagramAccount": "",
+        "facebookAccount": "",
+        "isReferee": false,
+        "images": {}
+      },
+      "type": "J",
+      "typeName": "Player",
+      "active": false,
+      "startDate": "2021-02-24T00:00:00",
+      "endDate": "2021-06-30T23:59:59",
+      "dorsal": "28",
+      "dorsalRaw": "28",
+      "position": 1,
+      "positionName": "Guard",
+      "lastTeam": "PANATHINAIKOS BC OPAP",
+      "externalId": 37248,
+      "images": {},
+      "club": {
+        "code": "PAN",
+        "name": "Panathinaikos OPAP Athens",
+        "abbreviatedName": "Panathinaikos",
+        "editorialName": "Panathinaikos",
+        "tvCode": "PAO",
+        "isVirtual": false,
+        "images": {
+          "crest": "https://media-cdn.incrowdsports.com/696724ea-a92f-456e-8572-aca4ce0ff025.png"
+        }
+      },
+      "season": {
+        "name": "EuroLeague 2020-21",
+        "code": "E2020",
+        "alias": "2020-21",
+        "competitionCode": "E",
+        "year": 2020,
+        "startDate": "2020-09-01T00:00:00"
+      }
+    }
+  ],
+  "total": 1
+}

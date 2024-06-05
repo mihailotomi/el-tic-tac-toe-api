@@ -1,0 +1,57 @@
+{
+  "data": [
+    {
+      "code": "BER",
+      "name": "ALBA Berlin",
+      "abbreviatedName": "ALBA",
+      "editorialName": "ALBA",
+      "tvCode": "BER",
+      "isVirtual": false,
+      "images": {
+        "crest": "https://media-cdn.incrowdsports.com/ccc34858-22b0-47dc-904c-9940b0a16ff3.png"
+      },
+      "sponsor": "ALBA Berlin",
+      "clubPermanentName": "ALBA Berlin Basketballteam",
+      "clubPermanentAlias": "ALBA Berlin",
+      "country": {
+        "code": "GER",
+        "name": "Germany"
+      },
+      "address": "Knesebeckstr. 56-58, 10719 Berlin – Germany",
+      "website": "http://www.albaberlin.de",
+      "ticketsUrl": "https://www.albaberlin.de/tickets/einzeltickets.html",
+      "twitterAccount": "albaberlin",
+      "venueCode": "ASY",
+      "city": "BERLIN",
+      "president": "Supervisory Board:<br> Dr. Axel Schweitzer, Dieter Hauert<br>CEO: Marco Baldi",
+      "phone": "+49 30 300 905 10"
+    },
+    {
+      "code": "IST",
+      "name": "Anadolu Efes Istanbul",
+      "abbreviatedName": "Efes",
+      "editorialName": "Efes",
+      "tvCode": "EFS",
+      "isVirtual": false,
+      "images": {
+        "crest": "https://media-cdn.incrowdsports.com/8ea8cec7-d8f7-45f4-a956-d976b5867610.png"
+      },
+      "sponsor": "Anadolu Efes Istanbul",
+      "clubPermanentName": "Anadolu Efes Spor Kulubu",
+      "clubPermanentAlias": "Efes",
+      "country": {
+        "code": "TUR",
+        "name": "Turkiye"
+      },
+      "address": "Mahmutbey Mahallesi Ordu Caddesi 2581. Sokak No:3 - Bagcılar 34218 Istanbul ",
+      "website": "https://www.anadoluefessk.org/",
+      "ticketsUrl": "https://www.anadoluefessk.org/en/tickets",
+      "twitterAccount": "AnadoluEfesSK",
+      "venueCode": "ATF",
+      "city": "ISTANBUL",
+      "president": "Tuncay Ozilhan",
+      "phone": "+90 212 449 38 84"
+    }
+  ],
+  "total": 2
+}
