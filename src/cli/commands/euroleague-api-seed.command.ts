@@ -1,8 +1,7 @@
-import { ConsoleLogger, Inject, LoggerService } from "@nestjs/common";
+import { Inject, LoggerService } from "@nestjs/common";
 import { CommandRunner, Option, SubCommand } from "nest-commander";
 import { EuroleagueApiGatewayProvider } from "src/core/gateway/providers/euroleague-api-gateway.provider";
 import { PlayerService } from "src/player/services/player.service";
-import fs from "fs";
 import { LOGGER } from "src/core/infrastructure/logging/injection-token";
 
 @SubCommand({
@@ -18,19 +17,22 @@ export class EuroleagueApiSeedCommand extends CommandRunner {
   }
 
   async run(_inputs: string[], options: { season: number }): Promise<void> {
-    const seasons = options.season ? [options.season] : Array.from({ length: 2014 - 2000 + 1 }, (_v, i) => 2014 - i);
+    const seasons = options.season ? [options.season] : Array.from({ length: 2023 - 2000 + 1 }, (_v, i) => 2014 - i);
     for (const season of seasons) {
       try {
         this.logger.log(`[Euroleague API] - Seeding players for season: ${season}`);
         const { players: createPlayerDtoList, playerSeasons: createPsDtoList } =
+          // eslint-disable-next-line no-await-in-loop
           await this.euroleagueApiGateway.getPlayersForSeason(season);
 
+        // eslint-disable-next-line no-await-in-loop
         await this.playerService.insertPlayers(createPlayerDtoList);
+        // eslint-disable-next-line no-await-in-loop
         await this.playerService.upsertPlayerSeasons(createPsDtoList);
         this.logger.log(`[Euroleague API] - Successfully seeded players for season: ${season}`);
       } catch (error) {
         this.logger.error(`[Euroleague API] - Error while seeding players for season: ${season}`);
-        this.logger.error(error?.message || error.error.message);
+        this.logger.error(error);
       }
     }
   }

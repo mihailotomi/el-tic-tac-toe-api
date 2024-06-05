@@ -1,7 +1,7 @@
 import { Command, CommandRunner } from "nest-commander";
 import { ClubService } from "src/club/services/club.service";
 import { EuroleagueApiGatewayProvider } from "src/core/gateway/providers/euroleague-api-gateway.provider";
-import { ConsoleLogger, Inject, LoggerService } from "@nestjs/common";
+import { Inject, LoggerService } from "@nestjs/common";
 import { LOGGER } from "src/core/infrastructure/logging/injection-token";
 
 @Command({
@@ -17,7 +17,7 @@ export class SeedClubsCommand extends CommandRunner {
     super();
   }
 
-  async run(_inputs: string[], _options: {}): Promise<void> {
+  async run(_inputs: string[], _options: null): Promise<void> {
     for (let year = 2023; year >= 2000; year--) {
       this.logger.log(`[Euroleague API] - Seeding clubs for season: ${year}`);
       // NOTE: we don't want to run this in parallel, because we want the latest club names and crests

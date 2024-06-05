@@ -1,12 +1,10 @@
 import { HttpService } from "@nestjs/axios";
-import { HttpException, Inject, Injectable, LoggerService } from "@nestjs/common";
+import { Inject, Injectable, LoggerService } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { firstValueFrom } from "rxjs";
 import { CreatePlayerSeasonDto } from "src/player/dto/create-player-season.dto";
 import { CreatePlayerDto } from "src/player/dto/create-player.dto";
 import { LOGGER } from "src/core/infrastructure/logging/injection-token";
-import { validate } from "class-validator";
-import { plainToInstance } from "class-transformer";
 import clubUris from "../data/club-uris.json";
 import { ProballersPlayerIntermediateDto } from "../dto/proballers-player-intermediate.dto";
 import { ProballersMapperService } from "../mappers/proballers-mapper.service";
@@ -28,13 +26,14 @@ export class ProballersGatewayProvider {
     clubCode: string,
   ): Promise<{ playerSeasonDtoList: CreatePlayerSeasonDto[]; playerDtoList: CreatePlayerDto[] } | null> => {
     if (!clubUris[clubCode]) {
-      return null;
+      throw new Error("Non existent club code!");
     }
     const playersIntermediateDtoList = await this.getIntermediateDtoList(clubUris[clubCode], clubCode);
     const playerDtoList = [];
     const playerSeasonDtoList = [];
 
     for (const dto of playersIntermediateDtoList) {
+      // eslint-disable-next-line no-await-in-loop
       const data = await this.getPlayerSeasonDetails(dto);
 
       if (data) {
@@ -71,6 +70,7 @@ export class ProballersGatewayProvider {
     } catch (error) {
       this.logger.error(`Error for club: ${clubCode}`);
       this.logger.error(error);
+      throw error;
     }
   };
 
@@ -96,7 +96,8 @@ export class ProballersGatewayProvider {
       return this.mapper.playerDataToCreateDto(response.data, seasons, clubCode);
     } catch (error) {
       this.logger.error(`Error for player: ${playerUrl}`);
-      this.logger.error(error.message || error.error.message);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      this.logger.error(error && error?.toString());
       return null;
     }
   };

@@ -2,11 +2,10 @@ import { Injectable } from "@nestjs/common";
 import cheerio from "cheerio";
 import { CreatePlayerSeasonDto } from "src/player/dto/create-player-season.dto";
 import { CreatePlayerDto } from "src/player/dto/create-player.dto";
-import { playerSeasons } from "src/core/database/schema/schema";
-import { ProballersPlayerIntermediateDto } from "../dto/proballers-player-intermediate.dto";
-import { NationalityMapperService } from "./nationality-mapper.service";
 import { validate } from "class-validator";
 import { plainToInstance } from "class-transformer";
+import { ProballersPlayerIntermediateDto } from "../dto/proballers-player-intermediate.dto";
+import { NationalityMapperService } from "./nationality-mapper.service";
 
 @Injectable()
 export class ProballersMapperService {
@@ -113,9 +112,9 @@ export class ProballersMapperService {
         },
       }));
 
-    const playerErrors = await validate(plainToInstance(CreatePlayerDto, player));
-    if (playerErrors) {
-      throw playerErrors;
+    const validationErrors = await validate(plainToInstance(CreatePlayerDto, player));
+    if (validationErrors.length) {
+      throw validationErrors;
     }
 
     return {

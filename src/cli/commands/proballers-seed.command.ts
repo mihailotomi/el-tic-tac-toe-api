@@ -1,4 +1,4 @@
-import { ConsoleLogger, Inject, LoggerService } from "@nestjs/common";
+import { Inject, LoggerService } from "@nestjs/common";
 import { CommandRunner, Option, SubCommand } from "nest-commander";
 import { ProballersGatewayProvider } from "src/core/gateway/providers/proballers-gateway.provider";
 import { LOGGER } from "src/core/infrastructure/logging/injection-token";

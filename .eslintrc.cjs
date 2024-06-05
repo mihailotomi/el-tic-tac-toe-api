@@ -71,5 +71,6 @@ module.exports = {
     "@typescript-eslint/no-unnecessary-type-assertion": "off",
     "no-shadow": "off",
     "@typescript-eslint/no-shadow": ["error"],
+    "no-restricted-syntax": ["error", "WithStatement", "BinaryExpression[operator='in']"],
   },
 };

@@ -1,4 +1,4 @@
-import { ConsoleLogger, DynamicModule, Module, Provider, Scope } from "@nestjs/common";
+import { ConsoleLogger, DynamicModule, Module } from "@nestjs/common";
 import { HttpExceptionFilter } from "./exceptions/filters/HttpExceptionFilter";
 import { FileLogger } from "./logging/file.logger";
 import { LoggingOptions } from "./logging/logging-options.interface";

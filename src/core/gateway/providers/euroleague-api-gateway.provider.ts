@@ -4,10 +4,10 @@ import { ConfigService } from "@nestjs/config";
 import { CreateClubDto } from "src/club/dto/create-club.dto";
 import { CreatePlayerSeasonDto } from "src/player/dto/create-player-season.dto";
 import { CreatePlayerDto } from "src/player/dto/create-player.dto";
+import { LOGGER } from "src/core/infrastructure/logging/injection-token";
 import { GatewayClubDto } from "../dto/gateway-club.dto";
 import { GatewayPlayerSeasonDto } from "../dto/gateway-player-season.dto";
 import { EuroleagueApiMapperService } from "../mappers/euroleague-api-mapper.service";
-import { LOGGER } from "src/core/infrastructure/logging/injection-token";
 
 @Injectable({})
 export class EuroleagueApiGatewayProvider {
@@ -40,6 +40,7 @@ export class EuroleagueApiGatewayProvider {
     } catch (error) {
       this.logger.error(`Clubs error for season: ${season}`);
       this.logger.error(error);
+      throw error;
     }
   }
 
@@ -61,6 +62,7 @@ export class EuroleagueApiGatewayProvider {
     } catch (error) {
       this.logger.error(`Players error for season: ${season}`);
       this.logger.error(error);
+      throw error;
     }
   }
 }

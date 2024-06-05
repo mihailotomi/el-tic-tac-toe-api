@@ -1,12 +1,12 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { createMock, DeepMocked } from "@golevelup/ts-jest";
-import { EuroleagueApiGatewayProvider } from "./euroleague-api-gateway.provider";
 import { HttpService } from "@nestjs/axios";
 import { InfrastructureModule } from "src/core/infrastructure/infrastructure.module";
-import { EuroleagueApiMapperService } from "../mappers/euroleague-api-mapper.service";
 import { ConfigService } from "@nestjs/config";
 import { LoggerService } from "@nestjs/common";
 import { LOGGER } from "src/core/infrastructure/logging/injection-token";
+import { EuroleagueApiMapperService } from "../mappers/euroleague-api-mapper.service";
+import { EuroleagueApiGatewayProvider } from "./euroleague-api-gateway.provider";
 
 import mockClubData from "../data/mock-clubs.json";
 import mockPlayerData from "../data/mock-players.json";
@@ -65,16 +65,14 @@ describe("EuroleagueApiGatewayProvider", () => {
       ]);
     });
 
-    it("should reject and log errors", async () => {
+    it("should reject and log club errors", async () => {
       httpService.axiosRef.mockRejectedValueOnce(new Error("Testing error"));
 
-      const errorLogMock = jest.spyOn(logger, "error");
-
-      await euroleagueApiGateway.getClubsForSeason(2020);
-
-      expect(errorLogMock).toHaveBeenCalled();
+      await expect(euroleagueApiGateway.getClubsForSeason(2020)).rejects.toThrow();
     });
+  });
 
+  describe("getPlayersForSeason", () => {
     it("should return valid player list", async () => {
       httpService.axiosRef.mockResolvedValueOnce({
         data: mockPlayerData,
@@ -87,7 +85,7 @@ describe("EuroleagueApiGatewayProvider", () => {
         playerSeasons: [
           {
             player: {
-              birthDate: "2006-02-04T00:00:00",
+              birthDate: "2006-02-04",
               country: "GRE",
               firstName: "NEOKLIS",
               imageUrl: undefined,
@@ -103,7 +101,7 @@ describe("EuroleagueApiGatewayProvider", () => {
         ],
         players: [
           {
-            birthDate: "2006-02-04T00:00:00",
+            birthDate: "2006-02-04",
             country: "GRE",
             firstName: "NEOKLIS",
             imageUrl: undefined,
@@ -111,6 +109,28 @@ describe("EuroleagueApiGatewayProvider", () => {
           },
         ],
       });
+    });
+
+    it("should reject and log player errors", async () => {
+      httpService.axiosRef.mockRejectedValueOnce(new Error("Testing error"));
+
+      await expect(euroleagueApiGateway.getPlayersForSeason(2020)).rejects.toThrow();
+    });
+
+    it("should ignore and log invalid players", async () => {
+      httpService.axiosRef.mockResolvedValueOnce({
+        data: {
+          ...mockPlayerData,
+          data: mockPlayerData.data.map((p) => ({ ...p, person: { ...p.person, birthDate: "" } })),
+        },
+        status: 200,
+      });
+
+      const errorLogMock = jest.spyOn(logger, "error");
+
+      await euroleagueApiGateway.getPlayersForSeason(2020);
+
+      expect(errorLogMock).toHaveBeenCalled();
     });
   });
 });

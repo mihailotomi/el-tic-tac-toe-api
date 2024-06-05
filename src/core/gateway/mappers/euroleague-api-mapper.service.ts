@@ -1,12 +1,12 @@
 import { Inject, Injectable, LoggerService } from "@nestjs/common";
 import { CreateClubDto } from "src/club/dto/create-club.dto";
 import { LOGGER } from "src/core/infrastructure/logging/injection-token";
-import { GatewayClubDto } from "../dto/gateway-club.dto";
-import { GatewayPlayerSeasonDto } from "../dto/gateway-player-season.dto";
 import { validate } from "class-validator";
 import { plainToInstance } from "class-transformer";
 import { CreatePlayerDto } from "src/player/dto/create-player.dto";
 import { CreatePlayerSeasonDto } from "src/player/dto/create-player-season.dto";
+import { GatewayPlayerSeasonDto } from "../dto/gateway-player-season.dto";
+import { GatewayClubDto } from "../dto/gateway-club.dto";
 
 @Injectable()
 export class EuroleagueApiMapperService {
@@ -45,7 +45,7 @@ export class EuroleagueApiMapperService {
         firstName,
         lastName,
         country: gatewatPlayerSeason.person?.country?.code,
-        birthDate: gatewatPlayerSeason.person.birthDate,
+        birthDate: gatewatPlayerSeason.person.birthDate.split("T")[0],
         imageUrl: gatewatPlayerSeason?.images && gatewatPlayerSeason.images?.headshot,
       };
       const playerSeason = {
@@ -55,9 +55,13 @@ export class EuroleagueApiMapperService {
         season: gatewatPlayerSeason.season.year,
       };
 
-      const playerErrors = await validate(plainToInstance(CreatePlayerDto, player));
-      if (playerErrors) {
-        throw playerErrors;
+      // eslint-disable-next-line no-await-in-loop
+      const validationErrors = await validate(plainToInstance(CreatePlayerDto, player));
+      if (validationErrors.length) {
+        this.logger.error(`Error for player: ${player?.firstName} ${player?.lastName}`);
+        this.logger.error(validationErrors[0].toString());
+        // eslint-disable-next-line no-continue
+        continue;
       }
 
       players.push(player);
