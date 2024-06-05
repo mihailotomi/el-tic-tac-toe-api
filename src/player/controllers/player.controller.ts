@@ -14,6 +14,7 @@ import { PlayerService } from "../services/player.service";
 import { SearchPlayerDto } from "../dto/search-player.dto";
 import { Player } from "../models/player";
 import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
+import { PlayerSeasonDto } from "../dto/player-season-dto";
 
 @ApiTags("players")
 @Controller("players")
@@ -29,8 +30,8 @@ export class PlayerController {
 
   @Get("/:id/club-history")
   @ApiParam({ name: "id", required: true })
-  getClubHistory(@Param("id") id: string): Promise<Club[]> {
-    return this.playerService.getPlayerClubHistory(+id);
+  getPlayerSeasons(@Param("id") id: string): Promise<PlayerSeasonDto[]> {
+    return this.playerService.getPlayerSeasons(+id);
   }
 
   @Get("/check-match")

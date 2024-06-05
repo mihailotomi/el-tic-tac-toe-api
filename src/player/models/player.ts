@@ -10,8 +10,4 @@ export class Player {
   country: string;
 
   imageUrl?: string;
-
-  createdAt: Date;
-
-  updatedAt: Date;
 }

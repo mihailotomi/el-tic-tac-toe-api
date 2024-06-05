@@ -1,13 +1,25 @@
 import { Injectable } from "@nestjs/common";
 import { Player } from "../models/player";
 import { PlayerDto } from "../dto/player.dto";
+import { PlayerSeason } from "../models/playerSeason";
+import { PlayerSeasonDto } from "../dto/player-season-dto";
 
 @Injectable()
 export class PlayerMapperService {
-  toDto = (player: Player): PlayerDto => {
+  playerToDto = (player: Player): PlayerDto => {
     const playerDto = new PlayerDto();
     Object.assign(playerDto, player);
 
     return playerDto;
+  };
+
+  playerSeasonToDto = (playerSeason: PlayerSeason): PlayerSeasonDto => {
+    const {
+      player: { birthDate, country, imageUrl, ...player },
+      club: { code, crestUrl, ...club },
+      ...ps
+    } = playerSeason;
+
+    return { player, club, ...ps };
   };
 }

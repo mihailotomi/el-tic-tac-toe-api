@@ -6,8 +6,4 @@ export class Club {
   code: string;
 
   crestUrl: string;
-
-  createdAt: Date;
-
-  updatedAt: Date;
 }

@@ -7,6 +7,8 @@ import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
 import { PlayerDto } from "../dto/player.dto";
 import { CreatePlayerSeasonDto } from "../dto/create-player-season.dto";
 import { CreatePlayerDto } from "../dto/create-player.dto";
+import { PlayerSeason } from "../models/playerSeason";
+import { PlayerSeasonDto } from "../dto/player-season-dto";
 
 @Injectable()
 export class PlayerService {
@@ -27,10 +29,11 @@ export class PlayerService {
 
   /** Returns all clubs a player has played for
    * @param {number} playerId
-   * @returns {Promise<Club[]>}
+   * @returns {Promise<PlayerSeasonDto[]>}
    */
-  getPlayerClubHistory = (playerId: number): Promise<Club[]> => {
-    return this.playerRepository.getPlayerClubs(playerId);
+  getPlayerSeasons = async (playerId: number): Promise<PlayerSeasonDto[]> => {
+    const playerSeasons = await this.playerRepository.getPlayerSeasons(playerId);
+    return playerSeasons.map(this.playerMapper.playerSeasonToDto);
   };
 
   /**
@@ -39,7 +42,7 @@ export class PlayerService {
    */
   searchAutocomplete = async ({ search }: SearchPlayerDto): Promise<PlayerDto[]> => {
     const players = await this.playerRepository.nameSearchAutocomplete({ search, limit: 10 });
-    return players.map(this.playerMapper.toDto);
+    return players.map(this.playerMapper.playerToDto);
   };
 
   /**

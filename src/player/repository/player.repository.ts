@@ -1,4 +1,4 @@
-import { SQL, and, countDistinct, eq, inArray, sql } from "drizzle-orm";
+import { SQL, and, countDistinct, eq, getTableColumns, inArray, sql } from "drizzle-orm";
 import { Inject, Injectable } from "@nestjs/common";
 import { DB_CONTEXT } from "src/core/database/constants/injection-token";
 import { DbType } from "src/core/database/schema/db-type";
@@ -8,6 +8,7 @@ import { CreatePlayerSeasonDto } from "../dto/create-player-season.dto";
 import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
 import { Player } from "../models/player";
 import { CreatePlayerDto } from "../dto/create-player.dto";
+import { PlayerSeason } from "../models/playerSeason";
 
 @Injectable()
 export class PlayerRepository {
@@ -19,8 +20,10 @@ export class PlayerRepository {
    * @returns {Promise<Player[]>}
    */
   nameSearchAutocomplete = async ({ search, limit }: { search: string; limit: number }): Promise<Player[]> => {
+    const { createdAt: _pca, updatedAt: _pua, ...playerColumns } = getTableColumns(players);
+
     return this.dbContext
-      .select()
+      .select({ ...playerColumns })
       .from(players)
       .where(
         sql.raw(`
@@ -45,23 +48,33 @@ export class PlayerRepository {
     return result.played;
   };
 
-  /** Returns all clubs a player has played for
+  /** Returns all seasons a player has played
    * @param {number} playerId
-   * @returns {Promise<Club[]>}
+   * @returns {Promise<PlayerSeason[]>}
    */
-  getPlayerClubs = async (playerId: number): Promise<Club[]> => {
+  getPlayerSeasons = async (playerId: number): Promise<PlayerSeason[]> => {
+    const { createdAt: _cca, updatedAt: _cua, ...clubColumns } = getTableColumns(clubs);
+    const { createdAt: _pca, updatedAt: _pua, ...playerColumns } = getTableColumns(players);
+    const {
+      createdAt: _psca,
+      updatedAt: _psua,
+      startDate: _pssd,
+      endDate: _psed,
+      ...playerSeasonColumns
+    } = getTableColumns(playerSeasons);
+
     const result = await this.dbContext
       .select({
-        id: clubs.id,
-        name: clubs.name,
-        code: clubs.code,
-        crestUrl: clubs.crestUrl,
-        createdAt: clubs.createdAt,
-        updatedAt: clubs.updatedAt,
+        club: clubColumns,
+        player: playerColumns,
+        ...playerSeasonColumns,
+        startDate: playerSeasons.startDate,
+        endDate: playerSeasons.endDate,
       })
       .from(playerSeasons)
       .where(eq(playerSeasons.playerId, playerId))
       .innerJoin(clubs, eq(clubs.id, playerSeasons.clubId))
+      .innerJoin(players, eq(players.id, playerSeasons.playerId))
       .groupBy();
     return result;
   };
@@ -98,6 +111,7 @@ export class PlayerRepository {
   };
 
   /**
+   * TODO: move bus. logic to service with transaction
    * Insert a season which player played
    * @param {CreatePlayerSeasonDto[]} playerSeasonDtoList list of dtos
    */
