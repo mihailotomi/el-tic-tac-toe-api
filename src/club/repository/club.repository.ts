@@ -1,15 +1,29 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { DB_CONTEXT } from "src/core/database/constants/injection-token";
-import { DbType } from "src/core/database/schema/db-type";
+import { DbType, TransactionType } from "src/core/database/schema/db-type";
 import { clubs, playerSeasons } from "src/core/database/schema/schema";
 import { alias } from "drizzle-orm/pg-core";
 import { and, count, desc, eq, ne, sql } from "drizzle-orm";
 import { CreateClubDto } from "../dto/create-club.dto";
 import { Club } from "../models/club";
+import { FindClubDto, isFindClubById } from "../dto/find-club.dto";
 
 @Injectable()
 export class ClubRepository {
   constructor(@Inject(DB_CONTEXT) private dbContext: DbType) {}
+
+  /**
+   * Find a club from the database, either by id or code
+   * @param {FindClubDto} dto
+   * @param {TransactionType} [tx] - transaction that can wrap the operation
+   */
+  findClub = async (dto: FindClubDto, tx?: TransactionType): Promise<Club | null> => {
+    const db = tx ? tx : this.dbContext;
+    const where = isFindClubById(dto) ? eq(clubs.id, dto.id) : eq(clubs.code, dto.code);
+
+    const clubList = await db.select().from(clubs).where(where);
+    return clubList.length ? clubList[0] : null;
+  };
 
   getGridClubsWithConstraint = async ({
     constraintClubs,

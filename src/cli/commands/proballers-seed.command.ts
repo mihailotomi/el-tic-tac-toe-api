@@ -25,7 +25,7 @@ export class ProballersSeedCommand extends CommandRunner {
       );
 
       await this.playerService.upsertPlayers(playerDtoList);
-      await this.playerService.upsertPlayerSeasons(playerSeasonDtoList);
+      await this.playerService.insertPlayerSeasons(playerSeasonDtoList);
       this.logger.log(`[Proballers] - Finised seeding players for club: ${options.clubCode}`);
     } catch (error) {
       this.logger.error(`[Proballers] - Error while seeding players for club: ${options.clubCode}`);

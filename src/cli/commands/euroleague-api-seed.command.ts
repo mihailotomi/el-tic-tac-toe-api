@@ -28,11 +28,12 @@ export class EuroleagueApiSeedCommand extends CommandRunner {
         // eslint-disable-next-line no-await-in-loop
         await this.playerService.insertPlayers(createPlayerDtoList);
         // eslint-disable-next-line no-await-in-loop
-        await this.playerService.upsertPlayerSeasons(createPsDtoList);
+        await this.playerService.insertPlayerSeasons(createPsDtoList);
         this.logger.log(`[Euroleague API] - Successfully seeded players for season: ${season}`);
       } catch (error) {
         this.logger.error(`[Euroleague API] - Error while seeding players for season: ${season}`);
         this.logger.error(error);
+        console.trace(error);
       }
     }
   }

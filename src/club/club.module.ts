@@ -9,6 +9,6 @@ import { GatewayModule } from "../core/gateway/gateway.module";
 @Module({
   imports: [DatabaseModule, GatewayModule],
   providers: [ClubRepository, ClubService, ClubMapperService],
-  exports: [ClubService],
+  exports: [ClubService, ClubRepository],
 })
 export class ClubModule {}

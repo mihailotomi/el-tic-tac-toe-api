@@ -5,9 +5,10 @@ import { PlayerRepository } from "./repository/player.repository";
 import { PlayerMapperService } from "./services/player-mapper.service";
 import { PlayerService } from "./services/player.service";
 import { PlayerController } from "./controllers/player.controller";
+import { ClubModule } from "src/club/club.module";
 
 @Module({
-  imports: [DatabaseModule, GatewayModule],
+  imports: [DatabaseModule, GatewayModule, ClubModule],
   providers: [PlayerRepository, PlayerMapperService, PlayerService],
   exports: [PlayerService],
   controllers: [PlayerController],
