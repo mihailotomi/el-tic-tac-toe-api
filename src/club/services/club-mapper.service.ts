@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Club } from "../models/club";
+import { Club } from "../entities/club";
 import { ClubDto } from "../dto/club.dto";
 
 @Injectable()

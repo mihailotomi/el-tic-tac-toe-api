@@ -1,13 +1,13 @@
-import { SQL, and, countDistinct, eq, getTableColumns, inArray, sql } from "drizzle-orm";
+import { SQL, and, count, countDistinct, desc, eq, getTableColumns, inArray, sql } from "drizzle-orm";
 import { Inject, Injectable } from "@nestjs/common";
 import { DB_CONTEXT } from "src/core/database/constants/injection-token";
 import { DbType, TransactionType } from "src/core/database/schema/db-type";
 import { clubs, playerSeasons, players } from "src/core/database/schema/schema";
 import { CreatePlayerSeasonDto } from "../dto/create-player-season.dto";
 import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
-import { Player } from "../models/player";
+import { Player } from "../entities/player";
 import { CreatePlayerDto } from "../dto/create-player.dto";
-import { PlayerSeason } from "../models/playerSeason";
+import { PlayerSeason } from "../entities/playerSeason";
 import { PgUpdateBuilder } from "drizzle-orm/pg-core";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 import { FindPlayerDto, isFindPlayerById } from "../dto/find-player.dto";
@@ -198,6 +198,29 @@ export class PlayerRepository extends BaseRepository {
       .onConflictDoNothing();
   };
 
+  getRandomGridCountries = ({
+    difficultyLimit = 5,
+    amount = 1,
+  }: {
+    difficultyLimit?: number;
+    amount?: number;
+  }): Promise<{ country: string }[]> => {
+    const topCountriesSq = this.dbContext
+      .select({ country: players.country })
+      .from(playerSeasons)
+      .innerJoin(players, eq(playerSeasons.playerId, players.id))
+      .groupBy(players.country)
+      .orderBy(desc(count()))
+      .limit(difficultyLimit)
+      .as("sq");
+
+    return this.dbContext
+      .select()
+      .from(topCountriesSq)
+      .orderBy(sql`random()`)
+      .limit(amount);
+  };
+
   /**
    * Builds a unique player where clause for queries and data manipulation
    * @private
@@ -214,7 +237,7 @@ export class PlayerRepository extends BaseRepository {
   };
 
   private getColumns = () => {
-    const { createdAt: _pca, updatedAt: _pua, ...playerColumns } = getTableColumns(players);
+    const { createdAt, updatedAt, ...playerColumns } = getTableColumns(players);
     return playerColumns;
   };
 }

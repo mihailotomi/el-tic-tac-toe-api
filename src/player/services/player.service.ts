@@ -10,6 +10,7 @@ import { PlayerSeasonDto } from "../dto/player-season-dto";
 import { eq } from "drizzle-orm";
 import { playerSeasons } from "src/core/database/schema/schema";
 import { ClubRepository } from "src/club/repository/club.repository";
+import { GridDifficulty } from "src/grid/enums/grid-difficulty";
 
 @Injectable()
 export class PlayerService {
@@ -87,6 +88,23 @@ export class PlayerService {
     });
   };
 
+  getRandomCountriesForGrid = async ({
+    difficulty = GridDifficulty.EASY,
+    amount = 1,
+  }: {
+    difficulty?: GridDifficulty;
+    amount?: number;
+  }): Promise<string[]> => {
+    return amount
+      ? (
+          await this.playerRepository.getRandomGridCountries({
+            difficultyLimit: this.countryDifficultyLimit(difficulty),
+            amount,
+          })
+        ).map((c) => c.country)
+      : [];
+  };
+
   /**
    * Assign all seasons of a player to another player (useful when one player is persisted with 2 different names, e. g. lacks middle name)
    * Deletes the second player
@@ -101,5 +119,20 @@ export class PlayerService {
       .where(eq(playerSeasons.playerId, mistakePlayerId));
 
     await this.playerRepository.deletePlayer({ kind: "id", id: mistakePlayerId });
+  };
+
+  private countryDifficultyLimit = (difficulty: GridDifficulty): number => {
+    switch (difficulty) {
+      case GridDifficulty.EASY:
+        return 5;
+
+      case GridDifficulty.MEDIUM:
+        return 10;
+
+      case GridDifficulty.HARD:
+        return 15;
+      default:
+        return 5;
+    }
   };
 }

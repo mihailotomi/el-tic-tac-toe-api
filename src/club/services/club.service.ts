@@ -1,16 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { ClubRepository } from "../repository/club.repository";
-import { EuroleagueApiGatewayProvider } from "../../core/gateway/providers/euroleague-api-gateway.provider";
 import { GridDifficulty } from "../../grid/enums/grid-difficulty";
-import { Club } from "../models/club";
+import { Club } from "../entities/club";
 import { CreateClubDto } from "../dto/create-club.dto";
+import { GridItem, isClubItem, isCountryItem } from "src/grid/entities/grid-item";
+import { SubqueryWithSelection } from "drizzle-orm/pg-core";
 
 @Injectable()
 export class ClubService {
-  constructor(
-    private euroleagueGateway: EuroleagueApiGatewayProvider,
-    private clubRepository: ClubRepository,
-  ) {}
+  constructor(private clubRepository: ClubRepository) {}
 
   private clubDifficultyLimit = (difficulty: GridDifficulty): number => {
     switch (difficulty) {
@@ -27,8 +25,17 @@ export class ClubService {
     }
   };
 
-  getForGridConstraint = async ({ constraintClubs }: { constraintClubs: Club[] }) => {
-    return this.clubRepository.getGridClubsWithConstraint({ constraintClubs });
+  getForGridConstraint = async ({ constraints }: { constraints: GridItem[] }): Promise<Club[]> => {
+    const constraintSqList: SubqueryWithSelection<any & { id: number }, any>[] = constraints.map((c, index) => {
+      if (isClubItem(c)) {
+        return this.clubRepository.getConstraintSubqueryForClub(c.club, index);
+      }
+      if (isCountryItem(c)) {
+        return this.clubRepository.getConstraintSubqueryForCountry(c.country, index);
+      }
+    });
+
+    return this.clubRepository.getGridClubsWithConstraint(constraintSqList);
   };
 
   getForGridRandom = async ({

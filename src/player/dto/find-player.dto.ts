@@ -1,4 +1,4 @@
-import { Player } from "../models/player";
+import { Player } from "../entities/player";
 
 type FindPlayerById = {
   kind: "id";

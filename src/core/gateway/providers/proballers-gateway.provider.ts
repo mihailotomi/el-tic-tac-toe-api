@@ -93,11 +93,11 @@ export class ProballersGatewayProvider {
           headers: { Accept: "text/html" },
         }),
       );
-      return this.mapper.playerDataToCreateDto(response.data, seasons, clubCode);
+      return await this.mapper.playerDataToCreateDto(response.data, seasons, clubCode);
     } catch (error) {
       this.logger.error(`Error for player: ${playerUrl}`);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      this.logger.error(error && error?.toString());
+      this.logger.error(error);
       return null;
     }
   };

@@ -97,13 +97,7 @@ export class ProballersMapperService {
     const playerSeasons =
       seasons &&
       seasons.map((season) => ({
-        player: {
-          firstName: names[0],
-          lastName: names[1],
-          imageUrl: imageUrl.includes("head-par-defaut") ? null : imageUrl,
-          birthDate,
-          country,
-        },
+        player,
         playerSeason: {
           season: 2023,
           startDate: this.assumeSeasonStart(season),
@@ -114,7 +108,7 @@ export class ProballersMapperService {
 
     const validationErrors = await validate(plainToInstance(CreatePlayerDto, player));
     if (validationErrors.length) {
-      throw validationErrors;
+      throw new Error(validationErrors[0].toString());
     }
 
     return {

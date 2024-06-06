@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { Player } from "../models/player";
+import { Player } from "../entities/player";
 import { PlayerDto } from "../dto/player.dto";
-import { PlayerSeason } from "../models/playerSeason";
+import { PlayerSeason } from "../entities/playerSeason";
 import { PlayerSeasonDto } from "../dto/player-season-dto";
 
 @Injectable()

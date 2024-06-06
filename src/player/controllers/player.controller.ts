@@ -9,10 +9,10 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import { ApiParam, ApiTags } from "@nestjs/swagger";
-import { Club } from "src/club/models/club";
+import { Club } from "src/club/entities/club";
 import { PlayerService } from "../services/player.service";
 import { SearchPlayerDto } from "../dto/search-player.dto";
-import { Player } from "../models/player";
+import { Player } from "../entities/player";
 import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
 import { PlayerSeasonDto } from "../dto/player-season-dto";
 

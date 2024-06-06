@@ -1,5 +1,5 @@
 import { Expose } from "class-transformer";
-import { Player } from "../models/player";
+import { Player } from "../entities/player";
 
 export class PlayerDto extends Player {
   @Expose()
