@@ -1,4 +1,4 @@
-import { Club } from "src/club/models/club";
+import { Club } from "src/club/entities/club";
 import { Player } from "./player";
 
 export class PlayerSeason {
