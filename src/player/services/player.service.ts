@@ -7,7 +7,7 @@ import { PlayerDto } from "../dto/player.dto";
 import { CreatePlayerSeasonDto } from "../dto/create-player-season.dto";
 import { CreatePlayerDto } from "../dto/create-player.dto";
 import { PlayerSeasonDto } from "../dto/player-season-dto";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { playerSeasons } from "src/core/database/schema/schema";
 import { ClubRepository } from "src/club/repository/club.repository";
 import { GridDifficulty } from "src/grid/enums/grid-difficulty";
@@ -115,19 +115,24 @@ export class PlayerService {
   };
 
   /**
-   * Assign all seasons of a player to another player (useful when one player is persisted with 2 different names, e. g. lacks middle name)
+   * Assigns all seasons that player2 has to player1 (if player1 doesn't already have them)
+   * When a player occurs twice in the database under different names (from 2 different data sources)
    * Deletes the second player
    * @param {number} correctPlayerId
-   * @param {number} mistakePlayerId
+   * @param {number} duplicatePlayerId
    * @memberof PlayerService
    */
-  mergeSeasonsForPlayers = async (correctPlayerId: number, mistakePlayerId: number) => {
-    await this.playerRepository
-      .updatePlayerSeasons()
-      .set({ playerId: correctPlayerId })
-      .where(eq(playerSeasons.playerId, mistakePlayerId));
+  mergeSeasonsForPlayers = (correctPlayerId: number, duplicatePlayerId: number): Promise<void> => {
+    return this.playerRepository.withTransaction(async (tx) => {
+      await this.playerRepository.deleteDuplicatePlayerSeasons(correctPlayerId, duplicatePlayerId, tx);
 
-    await this.playerRepository.deletePlayer({ kind: "id", id: mistakePlayerId });
+      await this.playerRepository
+        .updatePlayerSeasons(tx)
+        .set({ playerId: correctPlayerId })
+        .where(and(eq(playerSeasons.playerId, duplicatePlayerId)));
+
+      await this.playerRepository.deletePlayer({ kind: "id", id: duplicatePlayerId }, tx);
+    });
   };
 
   private countryDifficultyLimit = (difficulty: GridDifficulty): number => {

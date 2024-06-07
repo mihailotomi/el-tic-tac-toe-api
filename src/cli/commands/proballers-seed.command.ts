@@ -4,6 +4,8 @@ import { ProballersGatewayProvider } from "src/core/gateway/providers/proballers
 import { LOGGER } from "src/core/infrastructure/logging/injection-token";
 import { PlayerService } from "src/player/services/player.service";
 
+import clubUris from "../../core/gateway/data/club-uris.json";
+
 @SubCommand({
   name: "proballers",
 })
@@ -16,20 +18,21 @@ export class ProballersSeedCommand extends CommandRunner {
     super();
   }
 
-  async run(_inputs: string[], options: { clubCode: string }): Promise<void> {
-    this.logger.log(`[Proballers] - Seeding players for club: ${options.clubCode}`);
+  async run(_inputs: string[], options?: { clubCode?: string }): Promise<void> {
+    const clubCodes = options.clubCode ? [options.clubCode] : Object.keys(clubUris);
 
-    try {
-      const { playerDtoList, playerSeasonDtoList } = await this.proballersGateway.getClubHistoricRoster(
-        options.clubCode,
-      );
+    for (let clubCode of clubCodes) {
+      this.logger.log(`[Proballers] - Seeding players for club: ${clubCode}`);
+      try {
+        const { playerDtoList, playerSeasonDtoList } = await this.proballersGateway.getClubHistoricRoster(clubCode);
 
-      await this.playerService.upsertPlayers(playerDtoList);
-      await this.playerService.insertPlayerSeasons(playerSeasonDtoList);
-      this.logger.log(`[Proballers] - Finised seeding players for club: ${options.clubCode}`);
-    } catch (error) {
-      this.logger.error(`[Proballers] - Error while seeding players for club: ${options.clubCode}`);
-      this.logger.error(error);
+        await this.playerService.upsertPlayers(playerDtoList);
+        await this.playerService.insertPlayerSeasons(playerSeasonDtoList);
+        this.logger.log(`[Proballers] - Finised seeding players for club: ${clubCode}`);
+      } catch (error) {
+        this.logger.error(`[Proballers] - Error while seeding players for club: ${clubCode}`);
+        this.logger.error(error);
+      }
     }
   }
 

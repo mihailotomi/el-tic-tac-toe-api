@@ -33,7 +33,6 @@ export class EuroleagueApiSeedCommand extends CommandRunner {
       } catch (error) {
         this.logger.error(`[Euroleague API] - Error while seeding players for season: ${season}`);
         this.logger.error(error);
-        console.trace(error);
       }
     }
   }

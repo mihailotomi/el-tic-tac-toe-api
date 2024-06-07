@@ -99,7 +99,7 @@ export class ProballersMapperService {
       seasons.map((season) => ({
         player,
         playerSeason: {
-          season: 2023,
+          season: season,
           startDate: this.assumeSeasonStart(season),
           endDate: this.assumeSeasonEnd(season),
           clubCode,

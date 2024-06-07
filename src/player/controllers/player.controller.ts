@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Put,
   Query,
   UseInterceptors,
   UsePipes,
@@ -13,6 +14,7 @@ import { PlayerService } from "../services/player.service";
 import { SearchPlayerDto } from "../dto/search-player.dto";
 import { Player } from "../entities/player";
 import { PlayerSeasonDto } from "../dto/player-season-dto";
+import { MergePlayersDto } from "../dto/merge-players.dto";
 
 @ApiTags("players")
 @Controller("players")
@@ -30,5 +32,11 @@ export class PlayerController {
   @ApiParam({ name: "id", required: true })
   getPlayerSeasons(@Param("id") id: string): Promise<PlayerSeasonDto[]> {
     return this.playerService.getPlayerSeasons(+id);
+  }
+
+  @Put("/merge")
+  @UseInterceptors(ClassSerializerInterceptor)
+  mergePlayers(@Query() query: MergePlayersDto) {
+    return this.playerService.mergeSeasonsForPlayers(+query.player1, +query.player2);
   }
 }

@@ -13,6 +13,7 @@ import { FindPlayerDto, isFindPlayerById } from "../dto/find-player.dto";
 import { BaseRepository } from "src/core/database/repository/base.repository";
 import { ValidatePlayerClubsDto } from "../dto/validate-player-match.dto";
 import { ValidatePlayerCountryDto } from "../dto/validate-player-country.dto";
+import { QueryResult } from "pg";
 
 @Injectable()
 export class PlayerRepository extends BaseRepository {
@@ -108,7 +109,7 @@ export class PlayerRepository extends BaseRepository {
       .where(eq(playerSeasons.playerId, playerId))
       .innerJoin(clubs, eq(clubs.id, playerSeasons.clubId))
       .innerJoin(players, eq(players.id, playerSeasons.playerId))
-      .groupBy();
+      .orderBy(playerSeasons.season);
     return result;
   };
 
@@ -177,11 +178,10 @@ export class PlayerRepository extends BaseRepository {
    * @param {FindPlayerDto} dto
    * @param {TransactionType} [tx]
    */
-  deletePlayer = async (dto: FindPlayerDto, tx?: TransactionType): Promise<Player> => {
+  deletePlayer = async (dto: FindPlayerDto, tx?: TransactionType): Promise<QueryResult> => {
     const db = tx ? tx : this.dbContext;
 
-    const [result] = await db.delete(players).where(this.buildWhereClause(dto)).returning();
-    return result;
+    return db.delete(players).where(this.buildWhereClause(dto))
   };
 
   /**
@@ -213,14 +213,27 @@ export class PlayerRepository extends BaseRepository {
       .onConflictDoNothing();
   };
 
-  getRandomGridCountries = ({
-    difficultyLimit = 5,
-    amount = 1,
-  }: {
-    difficultyLimit?: number;
-    amount?: number;
-  }): Promise<{ country: string }[]> => {
-    const topCountriesSq = this.dbContext
+  /**
+   * Get random countries for grid
+   * @param {CreatePlayerSeasonDto} playerSeason
+   * @param {Object} payload
+   * @param {number} payload.difficultyLimit - limit for how much top countries to pick from
+   * @param {number} payload.amount - amount of countries to return
+   * @param {TransactionType} [tx]
+   */
+  getRandomGridCountries = (
+    {
+      difficultyLimit = 5,
+      amount = 1,
+    }: {
+      difficultyLimit?: number;
+      amount?: number;
+    },
+    tx?: TransactionType,
+  ): Promise<{ country: string }[]> => {
+    const db = tx ? tx : this.dbContext;
+
+    const topCountriesSq = db
       .select({ country: players.country })
       .from(playerSeasons)
       .innerJoin(players, eq(playerSeasons.playerId, players.id))
@@ -229,11 +242,29 @@ export class PlayerRepository extends BaseRepository {
       .limit(difficultyLimit)
       .as("sq");
 
-    return this.dbContext
+    return db
       .select()
       .from(topCountriesSq)
       .orderBy(sql`random()`)
       .limit(amount);
+  };
+
+  /**
+   * Delete all season of a duplicate player (when a player occurs twice in the database under different names)
+   * @param {number} playerId1 - right player id
+   * @param {number} playerId2 - duplicate player id
+   */
+  deleteDuplicatePlayerSeasons = (playerId1: number, playerId2: number, tx?: TransactionType): Promise<QueryResult> => {
+    const db = tx ? tx : this.dbContext;
+
+    return db.delete(playerSeasons).where(
+      sql`player_id = ${playerId2}
+      AND (season, club_id) IN (
+      SELECT season, club_id
+      FROM player_seasons
+      WHERE player_id = ${playerId1}
+      )`,
+    );
   };
 
   /**
