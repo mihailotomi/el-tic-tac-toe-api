@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { ClubService } from "src/club/services/club.service";
 import { PlayerService } from "src/player/services/player.service";
-import { GridItem } from "../entities/grid-item";
+import { GridItem, isClubItem, isCountryItem } from "../entities/grid-item";
+import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
 
 @Injectable()
 export class GridService {
@@ -27,6 +28,26 @@ export class GridService {
     );
 
     return { x, y };
+  };
+
+  /**
+   * Check if a certain player played for a certain club
+   * @param {CheckPlayerMatchDto} dto
+   * @returns {Promise<{ isMatch: boolean }>} object with a validation flag
+   */
+  checkMatch = async ({ playerId, item1, item2 }: CheckPlayerMatchDto): Promise<{ isMatch: boolean }> => {
+    const clubIds: number[] = [item1, item2].filter(isClubItem).map((item) => item.club.id);
+    const promises = [this.playerService.validatePlayerClubs({ playerId, clubIds })];
+
+    [item1, item2].forEach((item) => {
+      if (isCountryItem(item as GridItem)) {
+        promises.push(this.playerService.validatePlayerCountry({ playerId, country:item.country }));
+      }
+    });
+
+    return {
+      isMatch: (await Promise.all(promises)).reduce((totalMatch, singleMatch) => totalMatch && singleMatch, true),
+    };
   };
 
   getGridFieldsAmount = (): { clubAmount: number; countryAmount: number } => {

@@ -9,11 +9,9 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import { ApiParam, ApiTags } from "@nestjs/swagger";
-import { Club } from "src/club/entities/club";
 import { PlayerService } from "../services/player.service";
 import { SearchPlayerDto } from "../dto/search-player.dto";
 import { Player } from "../entities/player";
-import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
 import { PlayerSeasonDto } from "../dto/player-season-dto";
 
 @ApiTags("players")
@@ -32,11 +30,5 @@ export class PlayerController {
   @ApiParam({ name: "id", required: true })
   getPlayerSeasons(@Param("id") id: string): Promise<PlayerSeasonDto[]> {
     return this.playerService.getPlayerSeasons(+id);
-  }
-
-  @Get("/check-match")
-  @UsePipes(new ValidationPipe({ transform: true }))
-  checkMatch(@Query() query: CheckPlayerMatchDto) {
-    return this.playerService.checkMatch(query);
   }
 }

@@ -1,8 +1,8 @@
 import { Club } from "src/club/entities/club";
 
-type ClubItem = { itemType: "club"; club: Club };
+export type ClubItem = { itemType: "club"; club: Club };
 
-type CountryItem = { itemType: "country"; country: string };
+export type CountryItem = { itemType: "country"; country: string };
 
 export type GridItem = ClubItem | CountryItem;
 

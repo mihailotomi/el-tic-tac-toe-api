@@ -4,7 +4,6 @@ import { DB_CONTEXT } from "src/core/database/constants/injection-token";
 import { DbType, TransactionType } from "src/core/database/schema/db-type";
 import { clubs, playerSeasons, players } from "src/core/database/schema/schema";
 import { CreatePlayerSeasonDto } from "../dto/create-player-season.dto";
-import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
 import { Player } from "../entities/player";
 import { CreatePlayerDto } from "../dto/create-player.dto";
 import { PlayerSeason } from "../entities/playerSeason";
@@ -12,6 +11,8 @@ import { PgUpdateBuilder } from "drizzle-orm/pg-core";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 import { FindPlayerDto, isFindPlayerById } from "../dto/find-player.dto";
 import { BaseRepository } from "src/core/database/repository/base.repository";
+import { ValidatePlayerClubsDto } from "../dto/validate-player-match.dto";
+import { ValidatePlayerCountryDto } from "../dto/validate-player-country.dto";
 
 @Injectable()
 export class PlayerRepository extends BaseRepository {
@@ -49,8 +50,8 @@ export class PlayerRepository extends BaseRepository {
    * @param {TransactionType} [tx] - transaction that can wrap the operation
    * @returns {Promise<boolean>} validation result
    */
-  validatePlayerClubHistory = async (
-    { clubIds, playerId }: CheckPlayerMatchDto,
+  validatePlayerClubs = async (
+    { clubIds, playerId }: ValidatePlayerClubsDto,
     tx?: TransactionType,
   ): Promise<boolean> => {
     const db = tx ? tx : this.dbContext;
@@ -61,6 +62,20 @@ export class PlayerRepository extends BaseRepository {
       .where(and(eq(playerSeasons.playerId, playerId), inArray(playerSeasons.clubId, clubIds)));
 
     return result.played;
+  };
+
+  validatePlayerCounty = async (
+    { country, playerId }: ValidatePlayerCountryDto,
+    tx?: TransactionType,
+  ): Promise<boolean> => {
+    const db = tx ? tx : this.dbContext;
+
+    const [result] = await db
+      .select({ valid: eq(players.country, country) as SQL<boolean> })
+      .from(players)
+      .where(eq(players.id, playerId));
+
+    return result.valid;
   };
 
   /** Returns all seasons a player has played

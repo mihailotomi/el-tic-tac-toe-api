@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PlayerRepository } from "../repository/player.repository";
 import { PlayerMapperService } from "./player-mapper.service";
 import { SearchPlayerDto } from "../dto/search-player.dto";
-import { CheckPlayerMatchDto } from "../dto/check-player-match.dto";
+import { ValidatePlayerClubsDto } from "../dto/validate-player-match.dto";
 import { PlayerDto } from "../dto/player.dto";
 import { CreatePlayerSeasonDto } from "../dto/create-player-season.dto";
 import { CreatePlayerDto } from "../dto/create-player.dto";
@@ -11,6 +11,7 @@ import { eq } from "drizzle-orm";
 import { playerSeasons } from "src/core/database/schema/schema";
 import { ClubRepository } from "src/club/repository/club.repository";
 import { GridDifficulty } from "src/grid/enums/grid-difficulty";
+import { ValidatePlayerCountryDto } from "../dto/validate-player-country.dto";
 
 @Injectable()
 export class PlayerService {
@@ -21,13 +22,21 @@ export class PlayerService {
   ) {}
 
   /**
-   * Check if a certain player played for a certain club
-   * @param {CheckPlayerMatchDto} dto
-   * @returns {Promise<{ isMatch: boolean }>} object with a validation flag
+   * Check if a player played for a group of clubs
+   * @param {ValidatePlayerClubsDto} dto
+   * @returns {Promise< boolean >} validation flag
    */
-  checkMatch = async ({ clubIds, playerId }: CheckPlayerMatchDto): Promise<{ isMatch: boolean }> => {
-    const playedForClubs = await this.playerRepository.validatePlayerClubHistory({ clubIds, playerId });
-    return { isMatch: playedForClubs };
+  validatePlayerClubs = ({ clubIds, playerId }: ValidatePlayerClubsDto): Promise<boolean> => {
+    return this.playerRepository.validatePlayerClubs({ clubIds, playerId });
+  };
+
+  /**
+   * Check if a player is form a country
+   * @param {ValidatePlayerCountryDto} dto
+   * @returns {Promise< boolean >} validation flag
+   */
+  validatePlayerCountry = ({ country, playerId }: ValidatePlayerCountryDto): Promise<boolean> => {
+    return this.playerRepository.validatePlayerCounty({ country, playerId });
   };
 
   /** Returns all clubs a player has played for
