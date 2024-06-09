@@ -41,7 +41,7 @@ export class GridService {
 
     [item1, item2].forEach((item) => {
       if (isCountryItem(item as GridItem)) {
-        promises.push(this.playerService.validatePlayerCountry({ playerId, country:item.country }));
+        promises.push(this.playerService.validatePlayerCountry({ playerId, country: item.country }));
       }
     });
 

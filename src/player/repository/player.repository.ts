@@ -1,5 +1,9 @@
-import { SQL, and, count, countDistinct, desc, eq, getTableColumns, inArray, sql } from "drizzle-orm";
 import { Inject, Injectable } from "@nestjs/common";
+import type { QueryResult } from "pg";
+import { SQL, and, count, countDistinct, desc, eq, getTableColumns, inArray, isNotNull, sql } from "drizzle-orm";
+import type { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
+import type { PgUpdateBuilder } from "drizzle-orm/pg-core";
+
 import { DB_CONTEXT } from "src/core/database/constants/injection-token";
 import { DbType, TransactionType } from "src/core/database/schema/db-type";
 import { clubs, playerSeasons, players } from "src/core/database/schema/schema";
@@ -7,13 +11,10 @@ import { CreatePlayerSeasonDto } from "../dto/create-player-season.dto";
 import { Player } from "../entities/player";
 import { CreatePlayerDto } from "../dto/create-player.dto";
 import { PlayerSeason } from "../entities/playerSeason";
-import { PgUpdateBuilder } from "drizzle-orm/pg-core";
-import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 import { FindPlayerDto, isFindPlayerById } from "../dto/find-player.dto";
 import { BaseRepository } from "src/core/database/repository/base.repository";
 import { ValidatePlayerClubsDto } from "../dto/validate-player-match.dto";
 import { ValidatePlayerCountryDto } from "../dto/validate-player-country.dto";
-import { QueryResult } from "pg";
 
 @Injectable()
 export class PlayerRepository extends BaseRepository {
@@ -65,6 +66,12 @@ export class PlayerRepository extends BaseRepository {
     return result.played;
   };
 
+  /**
+   * Check if a certain player is from a certain country
+   * @param {CheckPlayerMatchDto} dto dto with country and player identifiers
+   * @param {TransactionType} [tx] - transaction that can wrap the operation
+   * @returns {Promise<boolean>} validation result
+   */
   validatePlayerCounty = async (
     { country, playerId }: ValidatePlayerCountryDto,
     tx?: TransactionType,
@@ -181,7 +188,7 @@ export class PlayerRepository extends BaseRepository {
   deletePlayer = async (dto: FindPlayerDto, tx?: TransactionType): Promise<QueryResult> => {
     const db = tx ? tx : this.dbContext;
 
-    return db.delete(players).where(this.buildWhereClause(dto))
+    return db.delete(players).where(this.buildWhereClause(dto));
   };
 
   /**
@@ -237,6 +244,7 @@ export class PlayerRepository extends BaseRepository {
       .select({ country: players.country })
       .from(playerSeasons)
       .innerJoin(players, eq(playerSeasons.playerId, players.id))
+      .where(isNotNull(players.country))
       .groupBy(players.country)
       .orderBy(desc(count()))
       .limit(difficultyLimit)
